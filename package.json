@@ -1,0 +1,13 @@
+{
+  "name": "spotifylib.js",
+  "version": "1.0.0",
+  "description": "Spotify web api wrapper.",
+  "main": "./src/index.js",
+  "repository": "https://github.com/spotify-js/spotifylib.js",
+  "author": "Coltzy <coltzy@hotmail.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "eslint": "^8.16.0",
+    "prettier": "^2.6.2"
+  }
+}
