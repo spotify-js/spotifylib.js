@@ -1,3 +1,7 @@
+const Util = require('./Util.js');
+
+const PlayerManager = require('./managers/Player.js');
+
 class Spotify {
   /**
    * Spotify Client.
@@ -9,6 +13,18 @@ class Spotify {
      * @type {string}
      */
     this.access_token = access_token;
+
+    /**
+     * The util for the spotify client.
+     * @type {Util}
+     */
+    this.util = new Util(this);
+
+    /**
+     * The Player Manager.
+     * @type {PlayerManager}
+     */
+    this.player = new PlayerManager(this);
   }
 
   /**
@@ -27,3 +43,8 @@ class Spotify {
 }
 
 module.exports = Spotify;
+
+/**
+ * Track, album, artist joined with their id by a colon. eg: spotify:album:5ht7ItJgpBH7W6vJ5BqpPr
+ * @typedef {string} ContextURI
+ */
