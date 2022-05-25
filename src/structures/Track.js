@@ -38,6 +38,15 @@ class Track extends Base {
   remove() {
     return this.spotify.tracks.remove(this.id);
   }
+
+  /**
+   * Shortcut to queue a track.
+   * @param {string} device - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
+   * @returns {Promise}
+   */
+  queue(device) {
+    return this.spotify.player.queue(this.uri, device);
+  }
 }
 
 module.exports = Track;
