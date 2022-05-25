@@ -3,6 +3,7 @@ const Util = require('./Util.js');
 const PlayerManager = require('./managers/Player.js');
 const TrackManager = require('./managers/Track.js');
 const PlaylistManager = require('./managers/Playlist.js');
+const EpisodeManager = require('./managers/Episode.js');
 
 class Spotify {
   /**
@@ -39,6 +40,12 @@ class Spotify {
      * @type {PlaylistManager}
      */
     this.playlists = new PlaylistManager(this);
+
+    /**
+     * The Episode Manager.
+     * @type {ShowManager}
+     */
+    this.episodes = new EpisodeManager(this);
   }
 
   /**
