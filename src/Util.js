@@ -17,6 +17,7 @@ class Util {
    * Fetchs from spotify's api.
    * @param {string} path - The path to fetch from.
    * @param {string} method - The method used in the fetch.
+   * @param {object} body - The body for the fetch.
    * @param {node-fetch#Options} options - The options for the fetch.
    * @returns {node-fetch#Response}
    */
@@ -34,7 +35,11 @@ class Util {
     options['method'] = method;
 
     if (Object.keys(body).length) {
-      options['body'] = JSON.stringify(body);
+      if (typeof body == 'object') {
+        options['body'] = JSON.stringify(body);
+      } else {
+        options['body'] = body;
+      }
     }
 
     return new Promise((resolve) => resolve(fetch(path, options)));
