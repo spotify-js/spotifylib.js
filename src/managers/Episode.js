@@ -31,7 +31,13 @@ class EpisodeManager {
             path,
           })
           .then((response) =>
-            response.json().then((body) => new Episode(this.spotify, body))
+            response.json().then((body) => {
+              if (response.status == 200) {
+                return new Episode(this.spotify, body);
+              }
+
+              return body;
+            })
           )
       );
     });
@@ -59,16 +65,15 @@ class EpisodeManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              {
-                let b = body;
+              if (body.items) {
+                const episodes = body.items.map(
+                  (t) => new Episode(this.spotify, t)
+                );
 
-                if (b.items) {
-                  const episodes = body.items.map((t) => new Episode(t));
-                  b['items'] = episodes;
-                }
-
-                return b;
+                return episodes;
               }
+
+              return body;
             })
           )
       );
@@ -141,7 +146,15 @@ class EpisodeManager {
           .fetch({
             path,
           })
-          .then((response) => response.json())
+          .then((response) =>
+            response.json().then((body) => {
+              if (Array.isArray(body) && body.length == 0) {
+                return body[0];
+              }
+
+              return body;
+            })
+          )
       );
     });
   }

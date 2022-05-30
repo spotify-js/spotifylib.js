@@ -38,7 +38,13 @@ class PlaylistManager {
             path,
           })
           .then((response) =>
-            response.json().then((body) => new Playlist(this.spotify, body))
+            response.json().then((body) => {
+              if (response.status == 200) {
+                return new Playlist(this.spotify, body);
+              }
+
+              return body;
+            })
           )
       );
     });
@@ -97,14 +103,15 @@ class PlaylistManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
+              if (body.items) {
+                const tracks = body.items.map(
+                  (t) => new Track(this.spotify, t)
+                );
 
-              if (b.items) {
-                const tracks = body.items.map((t) => new Track(t));
-                b['items'] = tracks;
+                return tracks;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -208,14 +215,15 @@ class PlaylistManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
+              if (body.items) {
+                const playlists = body.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
 
-              if (b.items) {
-                const tracks = body.items.map((t) => new Playlist(t));
-                b['items'] = tracks;
+                return playlists;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -283,14 +291,15 @@ class PlaylistManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
+              if (body.playlists) {
+                const playlists = body.playlists.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
 
-              if (b.playlists) {
-                const tracks = body.playlists.items.map((t) => new Playlist(t));
-                b.playlists['items'] = tracks;
+                return playlists;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -321,14 +330,15 @@ class PlaylistManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
+              if (body.playlists) {
+                const playlists = body.playlists.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
 
-              if (b.playlists) {
-                const tracks = body.playlists.items.map((t) => new Playlist(t));
-                b.playlists['items'] = tracks;
+                return playlists;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -360,9 +370,13 @@ class PlaylistManager {
 
     return new Promise((resolve) => {
       resolve(
-        this.spotify.util
-          .fetch(opts)
-          .then((response) => Object({ status: response.status }))
+        this.spotify.util.fetch(opts).then((response) => {
+          if (response.status == 200) {
+            return response.json();
+          }
+
+          return Object({ status: response.status });
+        })
       );
     });
   }

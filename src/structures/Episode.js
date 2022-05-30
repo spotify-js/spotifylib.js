@@ -33,6 +33,14 @@ class Episode extends Base {
   }
 
   /**
+   * Shortcut to check if a episodes saved in the current Spotify user's library.
+   * @returns {Promise}
+   */
+  favorited() {
+    return this.spotify.episodes.favorited(this.id);
+  }
+
+  /**
    * Shortcut to queue an episode.
    * @param {string} device - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
    * @returns {Promise}

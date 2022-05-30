@@ -38,7 +38,13 @@ class TrackManager {
             path,
           })
           .then((response) =>
-            response.json().then((body) => new Track(this.spotify, body))
+            response.json().then((body) => {
+              if (response.status == 200) {
+                return new Track(this.spotify, body);
+              }
+
+              return body;
+            })
           )
       );
     });
@@ -66,12 +72,15 @@ class TrackManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
+              if (body.items) {
+                const tracks = body.items.map(
+                  (t) => new Track(this.spotify, t)
+                );
 
-              const tracks = body.items.map((t) => new Track(t));
-              b['items'] = tracks;
+                return tracks;
+              }
 
-              return b;
+              return body;
             })
           )
       );
@@ -144,14 +153,23 @@ class TrackManager {
           .fetch({
             path,
           })
-          .then((response) => response.json())
+          .then((response) =>
+            response.json().then((body) => {
+              if (Array.isArray(body) && body.length == 0) {
+                return body[0];
+              }
+
+              return body;
+            })
+          )
       );
     });
   }
 
   /**
+   * Recommendations are generated based on the available information for a given seed entity and matched against similar artists and tracks.
    * @param {RecommendedOptions} options
-   *
+   * @returns {Promise}
    */
   recommendations({
     seeds = {},

@@ -32,7 +32,13 @@ class ShowManager {
             path,
           })
           .then((response) =>
-            response.json().then((body) => new Show(this.spotify, body))
+            response.json().then((body) => {
+              if (response.status == 200) {
+                return new Show(this.spotify, body);
+              }
+
+              return body;
+            })
           )
       );
     });
@@ -62,16 +68,15 @@ class ShowManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
-
-              if (b.items) {
+              if (body.items) {
                 const episodes = body.items.map(
                   (e) => new Episode(this.spotify, e)
                 );
-                b['items'] = episodes;
+
+                return episodes;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -100,16 +105,15 @@ class ShowManager {
           })
           .then((response) =>
             response.json().then((body) => {
-              let b = body;
-
-              if (b.items) {
+              if (body.items) {
                 const shows = body.items.map(
                   (s) => new Episode(this.spotify, s)
                 );
-                b['items'] = shows;
+
+                return shows;
               }
 
-              return b;
+              return body;
             })
           )
       );
@@ -182,7 +186,15 @@ class ShowManager {
           .fetch({
             path,
           })
-          .then((response) => response.json())
+          .then((response) =>
+            response.json().then((body) => {
+              if (Array.isArray(body) && body.length == 0) {
+                return body[0];
+              }
+
+              return body;
+            })
+          )
       );
     });
   }

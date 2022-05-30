@@ -356,7 +356,7 @@ class PlayerManager {
 
   /**
    * Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
-   * @param {number} [limit=20] - The maximum number of items to return. Default: 20. Minimum: 1. Maximum: 50.
+   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
    * @param {number} after - A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position.
    * @param {number} before -A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position.
    * @returns {Promise}

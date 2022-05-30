@@ -40,6 +40,14 @@ class Track extends Base {
   }
 
   /**
+   * Shortcut to check if a songs saved in the current Spotify user's 'Your Music' library.
+   * @returns {Promise}
+   */
+  favorited() {
+    return this.spotify.tracks.favorited(this.id);
+  }
+
+  /**
    * Shortcut to queue a track.
    * @param {string} device - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
    * @returns {Promise}
