@@ -105,6 +105,33 @@ class Spotify {
   }
 
   /**
+   * Get the list of markets where Spotify is available.
+   * @returns {Promise}
+   */
+  markets() {
+    const path = 'https://api.spotify.com/v1/markets ';
+
+    return new Promise((resolve) => {
+      resolve(
+        this.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.markets) {
+                const markets = body.markets;
+                return markets;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
+
+  /**
    * Set a property of the spotify client.
    * @param {string} key - The key of spotify to set.
    * @param {string} value - The value to set to.
