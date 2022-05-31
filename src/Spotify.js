@@ -77,6 +77,34 @@ class Spotify {
   }
 
   /**
+   * Retrieve a list of available genres seed
+   * @returns {Promise}
+   */
+  genres() {
+    /* prettier-ignore */
+    const path = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
+
+    return new Promise((resolve) => {
+      resolve(
+        this.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.genres) {
+                const genres = body.genres;
+                return genres;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
+
+  /**
    * Set a property of the spotify client.
    * @param {string} key - The key of spotify to set.
    * @param {string} value - The value to set to.
