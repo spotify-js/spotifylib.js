@@ -6,8 +6,13 @@
   "repository": "https://github.com/spotify-js/spotifylib.js",
   "author": "Coltzy <coltzy@hotmail.com>",
   "license": "Apache-2.0",
+  "scripts": {
+    "doc": "jsdoc -c conf.json"
+  },
   "devDependencies": {
     "eslint": "^8.16.0",
+    "foodoc": "^0.0.9",
+    "jsdoc": "^3.6.10",
     "prettier": "^2.6.2"
   },
   "dependencies": {

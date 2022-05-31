@@ -1,0 +1,25 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".js$",
+    "excludePattern": "(node_modules/|docs)"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true,
+    "systemName": "Spotify Library.js",
+    "systemSummary": "A library for interacting with spotify's API.",
+    "systemLogo": "./images/logo.png",
+    "systemColor": "#3cb733",
+    "favicon": "./images/icon.ico",
+    "methodHeadingReturns": true,
+    "collapseSymbols": false
+  },
+  "opts": {
+    "recurse": true,
+    "destination": "./docs/",
+    "readme": "./README.md",
+    "template": "node_modules/foodoc/template"
+  }
+}
