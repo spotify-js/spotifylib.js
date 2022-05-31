@@ -74,6 +74,12 @@ class Spotify {
      * @type {CategoryManager}
      */
     this.categories = new CategoryManager(this);
+
+    /**
+     * The Refresher from node module 'spotify-oauth2'
+     * @type {Refresher|null}
+     */
+    this.refresher = null;
   }
 
   /**

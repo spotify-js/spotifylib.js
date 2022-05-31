@@ -4,7 +4,6 @@ class Util {
   /**
    * The spotify client's util.
    * @param {Spotify} Spotify - The spotify client.
-   * @private
    */
   constructor(Spotify) {
     /**
@@ -31,8 +30,8 @@ class Util {
       },
     },
   }) {
-    options.headers['Authorization'] = 'Bearer ' + this.spotify.access_token;
     options['method'] = method;
+    options.headers['Authorization'] = 'Bearer ' + this.spotify.access_token;
 
     if (Object.keys(body).length) {
       if (typeof body == 'object') {
@@ -42,7 +41,22 @@ class Util {
       }
     }
 
-    return new Promise((resolve) => resolve(fetch(path, options)));
+    return new Promise((resolve) => {
+      fetch(path, options).then((response) => {
+        if (response.status == 401 && this.spotify.refresher) {
+          this.spotify.refresher.request().then((res) => {
+            if (res.access_token) {
+              this.spotify.set('access_token', res.access_token);
+              resolve(this.fetch({ path, method, body, options }));
+            } else {
+              resolve(response);
+            }
+          });
+        } else {
+          resolve(response);
+        }
+      });
+    });
   }
 }
 
