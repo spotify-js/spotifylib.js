@@ -7,6 +7,7 @@ const EpisodeManager = require('./managers/Episode.js');
 const ShowManager = require('./managers/Show.js');
 const AlbumManager = require('./managers/Album.js');
 const ArtistManager = require('./managers/Artist.js');
+const CategoryManager = require('./managers/Categories.js');
 
 class Spotify {
   /**
@@ -67,6 +68,12 @@ class Spotify {
      * @type {ArtistManager}
      */
     this.artists = new ArtistManager(this);
+
+    /**
+     * The category manager.
+     * @type {CategoryManager}
+     */
+    this.categories = new CategoryManager(this);
   }
 
   /**
