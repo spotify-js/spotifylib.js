@@ -52,7 +52,7 @@ class Show extends Base {
    * Shortcut to check if a shows saved in the current Spotify user's library.
    * @returns {Promise}
    */
-  favorited() {
+  starred() {
     return this.spotify.tracks.favorited(this.id);
   }
 }

@@ -132,7 +132,7 @@ class EpisodeManager {
    * @param {string|string[]} ids - A list of the Spotify IDs for the episodes.
    * @returns {Promise<boolean|boolean[]>}
    */
-  favorited(ids) {
+  starred(ids) {
     const options = qs.stringify({
       ids: typeof ids == 'string' ? [ids] : ids.join(','),
     });

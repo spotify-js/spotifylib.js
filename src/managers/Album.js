@@ -170,7 +170,7 @@ class AlbumManager {
    * @param {string} ids - A list of the Spotify IDs for the albums.
    * @returns {Promise<boolean|boolean[]>}
    */
-  favorited(ids) {
+  starred(ids) {
     const options = qs.stringify({
       ids: typeof ids == 'string' ? [ids] : ids.join(','),
     });

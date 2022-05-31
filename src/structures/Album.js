@@ -55,7 +55,7 @@ class Album extends Base {
    * Shortcut to check if a albums saved in the current Spotify user's library.
    * @returns {Promise}
    */
-  favorited() {
+  starred() {
     return this.spotify.albums.favorited(this.id);
   }
 }

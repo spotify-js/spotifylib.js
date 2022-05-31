@@ -139,7 +139,7 @@ class TrackManager {
    * @param {string|string[]} ids
    * @returns {Promise<boolean|boolean[]>}
    */
-  favorited(ids) {
+  starred(ids) {
     const options = qs.stringify({
       ids: typeof ids == 'string' ? [ids] : ids.join(','),
     });

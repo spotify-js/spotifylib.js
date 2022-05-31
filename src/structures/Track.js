@@ -44,7 +44,7 @@ class Track extends Base {
    * Shortcut to check if a songs saved in the current Spotify user's 'Your Music' library.
    * @returns {Promise}
    */
-  favorited() {
+  starred() {
     return this.spotify.tracks.favorited(this.id);
   }
 

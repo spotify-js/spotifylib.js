@@ -37,7 +37,7 @@ class Episode extends Base {
    * Shortcut to check if a episodes saved in the current Spotify user's library.
    * @returns {Promise}
    */
-  favorited() {
+  starred() {
     return this.spotify.episodes.favorited(this.id);
   }
 

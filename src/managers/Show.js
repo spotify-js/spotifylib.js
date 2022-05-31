@@ -171,7 +171,7 @@ class ShowManager {
    * @param {string|string[]} ids - A list of the Spotify IDs.
    * @returns {Promise<boolean|boolean[]>}
    */
-  favorited(ids) {
+  starred(ids) {
     const options = qs.stringify({
       ids: typeof ids == 'string' ? [ids] : ids.join(','),
     });
