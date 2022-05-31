@@ -7,20 +7,20 @@ const API = 'https://api.spotify.com/v1/me/tracks';
 class TrackManager {
   /**
    * Manages spotify tracks.
-   * @param {Spotify} Spotify - The spotify client.
+   * @param {Spotify} spotify - The spotify client.
    */
-  constructor(Spotify) {
+  constructor(spotify) {
     /**
      * The spotify client.
      * @type {Spotify}
      */
-    this.spotify = Spotify;
+    this.spotify = spotify;
 
     /**
      * The audio features.
      * @type {Audio}
      */
-    this.audio = new Audio(Spotify);
+    this.audio = new Audio(spotify);
   }
 
   /**

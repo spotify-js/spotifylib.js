@@ -3,9 +3,10 @@ const Track = require('./Track.js');
 
 class Playlist extends Base {
   /**
-   * Represents the a playlist.
+   * Represents the playlist.
    * @param {Spotify} spotify - The spotify client.
-   * @param {object} data - The track object data.
+   * @param {object} data - The playlist object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);

@@ -7,14 +7,14 @@ const API = 'https://api.spotify.com/v1/playlists';
 class PlaylistManager {
   /**
    * Manages spotify playing.
-   * @param {Spotify} Spotify - The spotify client.
+   * @param {Spotify} spotify - The spotify client.
    */
-  constructor(Spotify) {
+  constructor(spotify) {
     /**
      * The spotify client.
      * @type {Spotify}
      */
-    this.spotify = Spotify;
+    this.spotify = spotify;
   }
 
   /**

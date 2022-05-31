@@ -5,6 +5,7 @@ class Artist extends Base {
    * Represents the an artist.
    * @param {Spotify} spotify - The spotify client.
    * @param {object} data - The artist object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);

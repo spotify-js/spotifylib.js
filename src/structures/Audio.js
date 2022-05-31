@@ -2,9 +2,10 @@ const Base = require('../Base.js');
 
 class Audio extends Base {
   /**
-   * Represents the a track audio.
+   * Represents the a track's audio.
    * @param {Spotify} spotify - The spotify client.
-   * @param {object} data - The track object data.
+   * @param {object} data - The track's audio object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);
@@ -17,7 +18,7 @@ class Audio extends Base {
   }
 
   /**
-   * Shortcut to the tracks audio features.
+   * Shortcut to the track's audio features.
    * @returns {Promise}
    */
   features() {
@@ -25,7 +26,7 @@ class Audio extends Base {
   }
 
   /**
-   * Shortcut to the tracks audio analysis.
+   * Shortcut to the track's audio analysis.
    * @returns {Promise}
    */
   analysis() {

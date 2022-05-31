@@ -6,14 +6,14 @@ const API = 'https://api.spotify.com/v1/me/episodes';
 class EpisodeManager {
   /**
    * Manages spotify episodes.
-   * @param {Spotify} Spotify - The spotify client.
+   * @param {Spotify} spotify - The spotify client.
    */
-  constructor(Spotify) {
+  constructor(spotify) {
     /**
      * The spotify client.
      * @type {Spotify}
      */
-    this.spotify = Spotify;
+    this.spotify = spotify;
   }
 
   /**

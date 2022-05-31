@@ -6,6 +6,7 @@ class Track extends Base {
    * Represents the track.
    * @param {Spotify} spotify - The spotify client.
    * @param {object} data - The track object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);

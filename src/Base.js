@@ -1,7 +1,8 @@
 class Base {
   /**
    * Base for structures.
-   * @type {object} data - The structure data.
+   * @param {object} data - The structure data.
+   * @private
    */
   constructor(data) {
     Object.assign(this, data);

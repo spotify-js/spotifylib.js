@@ -5,6 +5,7 @@ class Episode extends Base {
    * Represents the episode.
    * @param {Spotify} spotify - The spotify client.
    * @param {object} data - The episode object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);

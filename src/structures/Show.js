@@ -5,7 +5,8 @@ class Show extends Base {
   /**
    * Represents the show.
    * @param {Spotify} spotify - The spotify client.
-   * @param {object} data - The track object data.
+   * @param {object} data - The show object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);

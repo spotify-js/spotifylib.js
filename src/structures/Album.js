@@ -6,12 +6,13 @@ class Album extends Base {
    * Represents the an album.
    * @param {Spotify} spotify - The spotify client.
    * @param {object} data - The album object data.
+   * @extends {Base}
    */
   constructor(spotify, data) {
     super(data);
 
     /**
-     * The tracks of the playlist.
+     * The tracks of the album.
      * @type {Track[]}
      */
     if (data.tracks) {
