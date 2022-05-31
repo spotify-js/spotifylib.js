@@ -234,6 +234,50 @@ class AlbumManager {
       );
     });
   }
+
+  /**
+   * Get Spotify catalog information about albums.
+   * @param {string} query - Your search query.
+   * @param {SearchOptions} options
+   * @returns {Promise<Album[]>}
+   */
+  search(query, { external = false, limit = 20, offset = 0 }) {
+    const opts = {
+      q: query,
+      type: 'album',
+      limit,
+      offset,
+    };
+
+    if (external) {
+      opts['include_external'] = 'audio';
+    }
+
+    const options = qs.stringify(opts);
+    const path = 'https://api.spotify.com/v1/search?' + options;
+
+    return new Promise((resolve) => {
+      resolve(
+        this.spotify.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.albums) {
+                const albums = body.albums.items.map(
+                  (a) => new Album(this.spotify, a)
+                );
+
+                return albums;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
 }
 
 module.exports = AlbumManager;

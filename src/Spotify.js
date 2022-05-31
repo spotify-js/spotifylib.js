@@ -152,3 +152,10 @@ module.exports = Spotify;
  * Track, album, artist joined with their id by a colon. eg: spotify:album:5ht7ItJgpBH7W6vJ5BqpPr
  * @typedef {string} ContextURI
  */
+
+/**
+ * @typedef {Object} SearchOptions
+ * @property {boolean} [external=false] - If the client can play externally hosted audio content, and marks the content as playable in the response.
+ * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
+ * @param {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+ */

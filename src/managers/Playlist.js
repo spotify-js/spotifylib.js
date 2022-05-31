@@ -380,6 +380,50 @@ class PlaylistManager {
       );
     });
   }
+
+  /**
+   * Get Spotify catalog information about playlists.
+   * @param {string} query - Your search query.
+   * @param {SearchOptions} options
+   * @returns {Promise<Playlist[]>}
+   */
+  search(query, { external = false, limit = 20, offset = 0 }) {
+    const opts = {
+      q: query,
+      type: 'playlist',
+      limit,
+      offset,
+    };
+
+    if (external) {
+      opts['include_external'] = 'audio';
+    }
+
+    const options = qs.stringify(opts);
+    const path = 'https://api.spotify.com/v1/search?' + options;
+
+    return new Promise((resolve) => {
+      resolve(
+        this.spotify.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.playlists) {
+                const playlists = body.playlists.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
+
+                return playlists;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
 }
 
 module.exports = PlaylistManager;

@@ -155,6 +155,50 @@ class ArtistManager {
       );
     });
   }
+
+  /**
+   * Get Spotify catalog information about artists.
+   * @param {string} query - Your search query.
+   * @param {SearchOptions} options
+   * @returns {Promise<Artist[]>}
+   */
+  search(query, { external = false, limit = 20, offset = 0 }) {
+    const opts = {
+      q: query,
+      type: 'artist',
+      limit,
+      offset,
+    };
+
+    if (external) {
+      opts['include_external'] = 'audio';
+    }
+
+    const options = qs.stringify(opts);
+    const path = 'https://api.spotify.com/v1/search?' + options;
+
+    return new Promise((resolve) => {
+      resolve(
+        this.spotify.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.artists) {
+                const artists = body.artists.items.map(
+                  (a) => new Artist(this.spotify, a)
+                );
+
+                return artists;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
 }
 
 module.exports = ArtistManager;

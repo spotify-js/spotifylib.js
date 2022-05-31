@@ -198,6 +198,50 @@ class ShowManager {
       );
     });
   }
+
+  /**
+   * Get Spotify catalog information about shows.
+   * @param {string} query - Your search query.
+   * @param {SearchOptions} options
+   * @returns {Promise<Show[]>}
+   */
+  search(query, { external = false, limit = 20, offset = 0 }) {
+    const opts = {
+      q: query,
+      type: 'show',
+      limit,
+      offset,
+    };
+
+    if (external) {
+      opts['include_external'] = 'audio';
+    }
+
+    const options = qs.stringify(opts);
+    const path = 'https://api.spotify.com/v1/search?' + options;
+
+    return new Promise((resolve) => {
+      resolve(
+        this.spotify.util
+          .fetch({
+            path,
+          })
+          .then((response) =>
+            response.json().then((body) => {
+              if (body.shows) {
+                const shows = body.shows.items.map(
+                  (p) => new Show(this.spotify, p)
+                );
+
+                return shows;
+              }
+
+              return body;
+            })
+          )
+      );
+    });
+  }
 }
 
 module.exports = ShowManager;
