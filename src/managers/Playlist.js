@@ -189,11 +189,10 @@ class PlaylistManager {
   /**
    * Get a list of the playlists owned or followed by the current Spotify user.
    * @param {string} [id] - The user's Spotify user ID - if not provided it will default to the current user.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return.
+   * @param {LimitOptions} options
    * @returns {Promise}
    */
-  users(id, limit = 20, offset = 0) {
+  users(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
       limit,
       offset,
@@ -309,11 +308,10 @@ class PlaylistManager {
   /**
    * Get a list of Spotify playlists tagged with a particular category.
    * @param {string} id - The Spotify category ID for the category.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return.
+   * @param {LimitOptions} options
    * @returns {Promise}
    */
-  categories(id, limit = 20, offset = 0) {
+  categories(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
       limit,
       offset,
@@ -387,7 +385,7 @@ class PlaylistManager {
    * @param {SearchOptions} options
    * @returns {Promise<Playlist[]>}
    */
-  search(query, { external = false, limit = 20, offset = 0 }) {
+  search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
       q: query,
       type: 'playlist',

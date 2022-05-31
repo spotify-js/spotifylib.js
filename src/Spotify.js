@@ -154,6 +154,12 @@ module.exports = Spotify;
  */
 
 /**
+ * @typedef {Object} LimitOptions
+ * @property {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
+ * @property {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+ */
+
+/**
  * @typedef {Object} SearchOptions
  * @property {boolean} [external=false] - If the client can play externally hosted audio content, and marks the content as playable in the response.
  * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.

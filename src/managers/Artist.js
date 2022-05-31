@@ -47,17 +47,15 @@ class ArtistManager {
   /**
    * Get Spotify catalog information about an artist's albums.
    * @param {string} id - The Spotify ID of the artist.
-   * @param {string[]} [groups] - A list of keywords that will be used to filter the response. (album, single, appears_on, compilation)
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+   * @param {ArtistAlbumsOptions} options
    * @returns {Promise<Album[]>}
    */
-  albums(
-    id,
+  /* prettier-ignore */
+  albums(id, {
     groups = ['album', 'single', 'appears_on', 'compilation'],
     limit = 20,
-    offset = 0
-  ) {
+    offset = 0,
+  } = {}) {
     const options = qs.stringify({
       include_groups: typeof groups == 'string' ? [groups] : groups.join(','),
       limit,
@@ -162,7 +160,7 @@ class ArtistManager {
    * @param {SearchOptions} options
    * @returns {Promise<Artist[]>}
    */
-  search(query, { external = false, limit = 20, offset = 0 }) {
+  search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
       q: query,
       type: 'artist',
@@ -202,3 +200,19 @@ class ArtistManager {
 }
 
 module.exports = ArtistManager;
+
+/**
+ * The list of groups for an album by default all are supplied.
+ * - album
+ * - single
+ * - appears_on
+ * - compilation
+ * @typedef {string} AlbumGroups
+ */
+
+/**
+ * @typedef {Object} ArtistAlbumsOptions
+ * @param {AlbumGroups[]} [groups] - A list of keywords that will be used to filter the response.
+ * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
+ * @param {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+ */

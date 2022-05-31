@@ -52,11 +52,10 @@ class TrackManager {
 
   /**
    * Get a list of the songs saved in the current Spotify user's 'Your Music' library.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+   * @param {LimitOptions} options
    * @returns {Promise}
    */
-  saved(limit = 20, offset = 0) {
+  saved({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
       limit,
       offset,
@@ -172,7 +171,7 @@ class TrackManager {
    * @param {SearchOptions} options
    * @returns {Promise<Track[]>}
    */
-  search(query, { external = false, limit = 20, offset = 0 }) {
+  search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
       q: query,
       type: 'track',

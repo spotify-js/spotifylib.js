@@ -17,7 +17,7 @@ class PlayerManager {
 
   /**
    * Get information about the user's current playback state.
-   * @param {string[]} [types=['track']] - The types that the client supports. (track, episode)
+   * @param {AdditionalTypes[]} [types=['track']] - The types that the client supports. (track, episode)
    * @returns {Promise}
    */
   state(types = ['track']) {
@@ -83,7 +83,7 @@ class PlayerManager {
 
   /**
    * Get the object currently being played on the user's Spotify account.
-   * @param {string[]} [types=['track']] - The types that the client supports. (track, episode)
+   * @param {AdditionalTypes[]} [types=['track']] - The types that the client supports.
    * @returns {Promise}
    */
   current(types = ['track']) {
@@ -266,7 +266,7 @@ class PlayerManager {
 
   /**
    *Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off.
-   * @param {RepeatStates} state
+   * @param {RepeatStates} state - The state to set the user's currently active device repeat mode to.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
    * @returns {Promise}
    */
@@ -356,9 +356,7 @@ class PlayerManager {
 
   /**
    * Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} after - A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position.
-   * @param {number} before -A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position.
+   * @param {RecentOptions} options
    * @returns {Promise}
    */
   recent(limit = 20, after, before) {
@@ -428,6 +426,20 @@ module.exports = PlayerManager;
  * @property {string} [device] - The device id to start the playback on - by default the current active device.
  * @property {number} [offset=0] - The offset to start the playback.
  * @property {number} [ms=0] - The position to start the playbak in milliseconds.
+ */
+
+/**
+ * @typedef {Object} RecentOptions
+ * @property {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
+ * @property {number} after - A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position.
+ * @property {number} before -A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position.
+ */
+
+/**
+ * Additional types for the client to support - by default 'track' is the suppiled type.
+ * - track
+ * - episode
+ * @typedef {string} AdditionalTypes
  */
 
 /**

@@ -47,11 +47,10 @@ class ShowManager {
   /**
    * Get Spotify catalog information about an show’s episodes.
    * @param {string} id - The Spotify ID for the show.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return.
+   * @param {LimitOptions} options
    * @returns {Promise}
    */
-  episodes(id, limit = 20, offset = 0) {
+  episodes(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
       limit,
       offset,
@@ -85,11 +84,10 @@ class ShowManager {
 
   /**
    * Get a list of shows saved in the current Spotify user's library.
-   * @param {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
-   * @param {number} [offset=0] - The index of the first item to return. Use with limit to get the next set of items.
+   * @param {LimitOptions} options
    * @returns {Promise}
    */
-  users(limit = 20, offset = 0) {
+  users({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
       limit,
       offset,
@@ -205,7 +203,7 @@ class ShowManager {
    * @param {SearchOptions} options
    * @returns {Promise<Show[]>}
    */
-  search(query, { external = false, limit = 20, offset = 0 }) {
+  search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
       q: query,
       type: 'show',
