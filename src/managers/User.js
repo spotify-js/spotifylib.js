@@ -23,7 +23,7 @@ class UserManager {
   /**
    * Get public profile information about a Spotify user.
    * @param {string} id - The Spotify ID for the user.
-   * @returns {Promise<User>}
+   * @returns {Promise<User|HTTPError|ApiError>}
    */
   get(id) {
     const path = 'https://api.spotify.com/v1/users/' + id;
@@ -38,7 +38,7 @@ class UserManager {
             if (body) {
               if (response.status == 200) {
                 const user = new User(this.spotify, body);
-                resolve(user);
+                return resolve(user);
               }
               reject(new ApiError(body.error));
             }
@@ -52,7 +52,7 @@ class UserManager {
    * Get the current user's top artists or tracks based on calculated affinity.
    * @param {string} type - The type of entity to return. Valid values: artists or tracks
    * @param {UserTopOptions} options
-   * @returns {Promise<Artist[]|Track[]>}
+   * @returns {Promise<Artist[]|Track[]|HTTPError|ApiError>}
    */
   top(type, { limit = 20, offset = 20, range = 'medium' } = {}) {
     const options = qs.stringify({
@@ -80,7 +80,7 @@ class UserManager {
                   result = body.items.map((t) => new Track(this.spotify, t));
                 }
 
-                resolve(result);
+                return resolve(result);
               }
               reject(new ApiError(body.error));
             }
@@ -93,7 +93,7 @@ class UserManager {
   /**
    * Get the current user's followed artists.
    * @param {FollowingArtistOptions} options
-   * @returns {Artist[]}
+   * @returns {Artist[]|HTTPError|ApiError}
    */
   followed({ after, limit = 20 } = {}) {
     const opts = {
@@ -120,7 +120,7 @@ class UserManager {
                 const artists = body.artists.items.map(
                   (a) => new Artist(this.spotify, a)
                 );
-                resolve(artists);
+                return resolve(artists);
               }
               reject(new ApiError(body.error));
             }
@@ -133,7 +133,7 @@ class UserManager {
   /**
    * Add the current user as a follower of one or more user.
    * @param {string|string[]} ids - The Spotify ID of the user.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   follow(ids) {
     const options = qs.stringify({
@@ -165,7 +165,7 @@ class UserManager {
   /**
    * Remove the current user as a follower of one or more user.
    * @param {string|string[]} ids - The Spotify ID of the user.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   unfollow(ids) {
     const options = qs.stringify({
@@ -198,7 +198,7 @@ class UserManager {
    * Check to see if the current user is following one or more users.
    * @param {string} ids - The Spotify ID of the user.
    * @param {string|string[]} users - A list of Spotify User IDs.
-   * @returns {boolean|boolean[]}
+   * @returns {boolean|boolean[]|HTTPError|ApiError}
    */
   following(ids) {
     const options = qs.stringify({
@@ -231,7 +231,7 @@ class UserManager {
 
   /**
    * Get detailed profile information about the current user (including the current user's username).
-   * @returns {Promise<User>}
+   * @returns {Promise<User|HTTPError|ApiError>}
    */
   me() {
     return new Promise((resolve, reject) => {
@@ -244,7 +244,7 @@ class UserManager {
             if (body) {
               if (response.status == 200) {
                 const user = new User(this.spotify, body);
-                resolve(user);
+                return resolve(user);
               }
               reject(new ApiError(body.error));
             }

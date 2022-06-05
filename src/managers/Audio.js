@@ -18,7 +18,7 @@ class AudioManager {
   /**
    * Get audio feature information for a single track identified by its unique Spotify ID.
    * @param {string} id - The Spotify ID for the track.
-   * @returns {Promise<Audio>}
+   * @returns {Promise<Audio|HTTPError|ApiError>}
    */
   features(id) {
     const path = API + '/audio-features/' + id;
@@ -31,7 +31,10 @@ class AudioManager {
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
-              resolve(body);
+              if (response.status == 200) {
+                return resolve(body);
+              }
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -42,7 +45,7 @@ class AudioManager {
   /**
    * Get a low-level audio analysis for a track in the Spotify catalog. The audio analysis describes the track’s structure and musical content, including rhythm, pitch, and timbre.
    * @param {string} id - The Spotify ID for the track.
-   * @returns {Promise<Audio>}
+   * @returns {Promise<Audio|HTTPError|ApiError>}
    */
   analysis(id) {
     const path = API + '/audio-analysis/' + id;
@@ -56,7 +59,7 @@ class AudioManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                resolve(body);
+                return resolve(body);
               }
               reject(new ApiError(body.error));
             }

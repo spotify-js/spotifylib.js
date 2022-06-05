@@ -29,7 +29,7 @@ class Show extends Base {
   /**
    * Shortcut to play the show.
    * @param {StartOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   play(options = {}) {
     return this.spotify.player.start(this.uri, options);
@@ -37,7 +37,7 @@ class Show extends Base {
 
   /**
    * Shortcut to save the show.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save() {
     return this.spotify.shows.save(this.id);
@@ -45,7 +45,7 @@ class Show extends Base {
 
   /**
    * Shortcut to remove the show.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove() {
     return this.spotify.shows.remove(this.id);
@@ -53,7 +53,7 @@ class Show extends Base {
 
   /**
    * Shortcut to check if a shows saved in the current Spotify user's library.
-   * @returns {Promise}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   starred() {
     return this.spotify.tracks.starred(this.id);

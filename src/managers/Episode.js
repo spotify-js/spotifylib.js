@@ -21,7 +21,7 @@ class EpisodeManager {
   /**
    * Get Spotify catalog information for a single episode identified by its unique Spotify ID.
    * @param {string} id - The Spotify ID for the episode.
-   * @returns {Promise<Episode>}
+   * @returns {Promise<Episode|HTTPError|ApiError>}
    */
   get(id) {
     const path = 'https://api.spotify.com/v1/episodes/' + id;
@@ -36,7 +36,7 @@ class EpisodeManager {
             if (body) {
               if (response.status == 200) {
                 const episode = new Episode(this.spotify, body);
-                resolve(episode);
+                return resolve(episode);
               }
               reject(new ApiError(body.error));
             }
@@ -49,7 +49,7 @@ class EpisodeManager {
   /**
    * Get a list of the episodes saved in the current Spotify user's library.
    * @param {LimitOptions} options
-   * @returns {Promise<Episode[]>}
+   * @returns {Promise<Episode[]|HTTPError|ApiError>}
    */
   users({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -71,7 +71,7 @@ class EpisodeManager {
                 const episodes = body.items.map(
                   (t) => new Episode(this.spotify, t)
                 );
-                resolve(episodes);
+                return resolve(episodes);
               }
               reject(new ApiError(body.error));
             }
@@ -84,7 +84,7 @@ class EpisodeManager {
   /**
    * Save one or more episodes to the current user's library.
    * @param {string|string[]} ids - A  list of the Spotify IDs.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save(ids) {
     const options = qs.stringify({
@@ -115,7 +115,7 @@ class EpisodeManager {
   /**
    * Remove one or more episodes from the current user's library.
    * @param {string|string[]} ids - A  list of the Spotify IDs.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove(ids) {
     const options = qs.stringify({
@@ -146,7 +146,7 @@ class EpisodeManager {
   /**
    * Check if one or more episodes is already saved in the current Spotify user's 'Your Episodes' library.
    * @param {string|string[]} ids - A list of the Spotify IDs for the episodes.
-   * @returns {Promise<boolean|boolean[]>}
+   * @returns {Promise<boolean|boolean[]|HTTPError|ApiError>}
    */
   starred(ids) {
     const options = qs.stringify({
@@ -178,7 +178,7 @@ class EpisodeManager {
    * Get Spotify catalog information about episodes.
    * @param {string} query - Your search query.
    * @param {SearchOptions} options
-   * @returns {Promise<Episode[]>}
+   * @returns {Promise<Episode[]|HTTPError|ApiError>}
    */
   search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -207,7 +207,7 @@ class EpisodeManager {
                 const episodes = body.episodes.items.map(
                   (e) => new Episode(this.spotify, e)
                 );
-                resolve(episodes);
+                return resolve(episodes);
               }
               reject(new ApiError(body.error));
             }

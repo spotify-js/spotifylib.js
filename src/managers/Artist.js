@@ -23,7 +23,7 @@ class ArtistManager {
   /**
    * Get Spotify catalog information for a single artist identified by their unique Spotify ID.
    * @param {string} id - The Spotify ID of the artist.
-   * @returns {Promise<Artist>}
+   * @returns {Promise<Artist|HTTPError|ApiError>}
    */
   get(id) {
     const path = API + '/' + id;
@@ -38,9 +38,9 @@ class ArtistManager {
             if (body) {
               if (response.status == 200) {
                 const artist = new Artist(this.spotify, body);
-                resolve(artist);
+                return resolve(artist);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -52,7 +52,7 @@ class ArtistManager {
    * Get Spotify catalog information about an artist's albums.
    * @param {string} id - The Spotify ID of the artist.
    * @param {ArtistAlbumsOptions} options
-   * @returns {Promise<Album[]>}
+   * @returns {Promise<Album[]|HTTPError|ApiError>}
    */
   /* prettier-ignore */
   albums(id, {
@@ -80,10 +80,9 @@ class ArtistManager {
                 const albums = body.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-  
-                resolve(albums);
+                return resolve(albums);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -94,7 +93,7 @@ class ArtistManager {
   /**
    * Add the current user as a follower of one or more artists.
    * @param {string|string[]} ids - The Spotify ID of the artist.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   follow(ids) {
     const options = qs.stringify({
@@ -126,7 +125,7 @@ class ArtistManager {
   /**
    * Remove the current user as a follower of one or more artists.
    * @param {string|string[]} ids - The Spotify ID of the artist.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   unfollow(ids) {
     const options = qs.stringify({
@@ -159,7 +158,7 @@ class ArtistManager {
    * Check to see if the current user is following one or more artists.
    * @param {string} ids - The Spotify ID of the artist.
    * @param {string|string[]} users - A list of Spotify User IDs.
-   * @returns {boolean|boolean[]}
+   * @returns {boolean|boolean[]|HTTPError|ApiError}
    */
   following(ids) {
     const options = qs.stringify({
@@ -182,7 +181,7 @@ class ArtistManager {
                   resolve(body[0]);
                 }
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -194,7 +193,7 @@ class ArtistManager {
    * Get Spotify catalog information about an artist's top tracks by country.
    * @param {string} id - The Spotify ID of the artist.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   top(id, country) {
     const options = qs.stringify({
@@ -215,9 +214,9 @@ class ArtistManager {
                 const tracks = body.tracks.map(
                   (t) => new Track(this.spotify, t)
                 );
-                resolve(tracks);
+                return resolve(tracks);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -228,7 +227,7 @@ class ArtistManager {
   /**
    * Get Spotify catalog information about artists similar to a given artist.
    * @param {string} id - The Spotify ID of the artist.
-   * @returns {Promise<Artist[]>}
+   * @returns {Promise<Artist[]|HTTPError|ApiError>}
    */
   related(id) {
     const path = API + '/' + id + '/related-artists';
@@ -245,9 +244,9 @@ class ArtistManager {
                 const artists = body.artists.map(
                   (a) => new Artist(this.spotify, a)
                 );
-                resolve(artists);
+                return resolve(artists);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -259,7 +258,7 @@ class ArtistManager {
    * Get Spotify catalog information about artists.
    * @param {string} query - Your search query.
    * @param {SearchOptions} options
-   * @returns {Promise<Artist[]>}
+   * @returns {Promise<Artist[]|HTTPError|ApiError>}
    */
   search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -288,9 +287,9 @@ class ArtistManager {
                 const artists = body.artists.items.map(
                   (a) => new Artist(this.spotify, a)
                 );
-                resolve(artists);
+                return resolve(artists);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });

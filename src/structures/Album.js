@@ -29,7 +29,7 @@ class Album extends Base {
   /**
    * Shortcut to play the album.
    * @param {StartOptions} options
-   * @returns {Promise<Album>}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   play(options = {}) {
     return this.spotify.player.start(this.uri, options);
@@ -37,7 +37,7 @@ class Album extends Base {
 
   /**
    * Shortcut to save the album.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save() {
     return this.spotify.albums.save(this.id);
@@ -45,7 +45,7 @@ class Album extends Base {
 
   /**
    * Shortcut to remove the album.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove() {
     return this.spotify.albums.remove(this.id);
@@ -53,7 +53,7 @@ class Album extends Base {
 
   /**
    * Shortcut to check if a albums saved in the current Spotify user's library.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   starred() {
     return this.spotify.albums.starred(this.id);

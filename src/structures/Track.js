@@ -35,7 +35,7 @@ class Track extends Base {
 
   /**
    * Shortcut to save the track.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save() {
     return this.spotify.tracks.save(this.id);
@@ -43,7 +43,7 @@ class Track extends Base {
 
   /**
    * Shortcut to remove the track.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove() {
     return this.spotify.tracks.remove(this.id);
@@ -51,7 +51,7 @@ class Track extends Base {
 
   /**
    * Shortcut to check if a songs saved in the current Spotify user's 'Your Music' library.
-   * @returns {Promise}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   starred() {
     return this.spotify.tracks.starred(this.id);
@@ -60,7 +60,7 @@ class Track extends Base {
   /**
    * Shortcut to queue a track.
    * @param {string} device - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   queue(device) {
     return this.spotify.player.queue(this.uri, device);

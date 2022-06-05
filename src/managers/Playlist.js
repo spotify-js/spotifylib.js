@@ -23,7 +23,7 @@ class PlaylistManager {
    * Get a playlist owned by a Spotify user.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {PlaylistOptions} options
-   * @returns {Promise<Playlist>}
+   * @returns {Promise<Playlist|HTTPError|ApiError>}
    */
   get(id, { types = ['track'], fields } = {}) {
     const options = qs.stringify({
@@ -43,7 +43,7 @@ class PlaylistManager {
             if (body) {
               if (response.status == 200) {
                 const playlist = new Playlist(this.spotify, body);
-                resolve(playlist);
+                return resolve(playlist);
               }
               reject(new ApiError(body.error));
             }
@@ -57,7 +57,7 @@ class PlaylistManager {
    * Change a playlist's name and public/private state. (The user must, of course, own the playlist.)
    * @param {string} id - The Spotify ID of the playlist.
    * @param {ModifyOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   modify(id, { name, public: state, collaborative, description } = {}) {
     const body = {
@@ -93,7 +93,7 @@ class PlaylistManager {
    * Get full details of the items of a playlist owned by a Spotify user.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {PlaylistTracksOptions} options
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   tracks(id, { types = ['track'], fields, limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -120,8 +120,7 @@ class PlaylistManager {
                   delete track.track;
                   return track;
                 });
-
-                resolve(tracks);
+                return resolve(tracks);
               }
               reject(new ApiError(body.error));
             }
@@ -136,7 +135,7 @@ class PlaylistManager {
    * @param {string} id - The Spotify ID of the playlist.
    * @param {string|string[]} uris - A list of Spotify URIs to add, can be track or episode URIs. Maximum: 100
    * @param {number} [position=0] - The position to insert the items, a zero-based index.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   add(id, uris, position = 0) {
     const body = {
@@ -172,7 +171,7 @@ class PlaylistManager {
    * @param {string} id - The Spotify ID of the playlist.
    * @param {string|string[]} uris - A list of Spotify URIs to remove, can be track or episode URIs. Maximum: 100
    * @param {string} [snapshot] - The playlist's snapshot ID against which you want to make the changes.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove(id, uris, snapshot) {
     const body = {
@@ -207,7 +206,7 @@ class PlaylistManager {
    * Get a list of the playlists owned or followed by the current Spotify user.
    * @param {string} [id] - The user's Spotify user ID - if not provided it will default to the current user.
    * @param {LimitOptions} options
-   * @returns {Promise<Playlist[]>}
+   * @returns {Promise<Playlist[]|HTTPError|ApiError>}
    */
   users(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -235,7 +234,7 @@ class PlaylistManager {
                 const playlists = body.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-                resolve(playlists);
+                return resolve(playlists);
               }
               reject(new ApiError(body.error));
             }
@@ -249,7 +248,7 @@ class PlaylistManager {
    * Add the current user as a follower of a playlist.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {boolean} [state=true] -  If the playlist will be included in user's public playlists.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   follow(id, state = true) {
     const path = API + '/' + id + '/followers';
@@ -269,10 +268,7 @@ class PlaylistManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                const playlists = body.items.map(
-                  (p) => new Playlist(this.spotify, p)
-                );
-                resolve(playlists);
+                resolve({ status: response.status });
               }
               reject(new ApiError(body.error));
             }
@@ -285,7 +281,7 @@ class PlaylistManager {
   /**
    * Remove the current user as a follower of a playlist.
    * @param {string} id - The Spotify ID of the playlist.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   unfollow(id) {
     const path = API + '/' + id + '/followers';
@@ -300,10 +296,7 @@ class PlaylistManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                const playlists = body.items.map(
-                  (p) => new Playlist(this.spotify, p)
-                );
-                resolve(playlists);
+                resolve({ status: response.status });
               }
               reject(new ApiError(body.error));
             }
@@ -317,7 +310,7 @@ class PlaylistManager {
    * Check to see if one or more Spotify users are following a specified playlist.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {string|string[]} users - A list of Spotify User IDs.
-   * @returns {boolean|boolean[]}
+   * @returns {boolean|boolean[]|HTTPError|ApiError}
    */
   followers(id, users) {
     const options = qs.stringify({
@@ -351,7 +344,7 @@ class PlaylistManager {
    * Create a playlist for a Spotify user.
    * @param {string} id - The user's Spotify user ID.
    * @param {ModifyOptions} options
-   * @returns {Promise<Playlist>}
+   * @returns {Promise<Playlist|HTTPError|ApiError>}
    */
   create(id, { name, public: state, collaborative, description } = {}) {
     const body = {
@@ -391,7 +384,7 @@ class PlaylistManager {
   /**
    * Get a list of Spotify featured playlists.
    * @param {FeaturedOptions} [options]
-   * @returns {Promise<Playlist[]>}
+   * @returns {Promise<Playlist[]|HTTPError|ApiError>}
    */
   featured({ limit = 20, locale, offset = 0, timestamp } = {}) {
     const opts = {
@@ -420,7 +413,7 @@ class PlaylistManager {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-                resolve(playlists);
+                return resolve(playlists);
               }
               reject(new ApiError(body.error));
             }
@@ -434,7 +427,7 @@ class PlaylistManager {
    * Get a list of Spotify playlists tagged with a particular category.
    * @param {string} id - The Spotify category ID for the category.
    * @param {LimitOptions} options
-   * @returns {Promise<Playlist[]>}
+   * @returns {Promise<Playlist[]|HTTPError|ApiError>}
    */
   categories(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -457,7 +450,7 @@ class PlaylistManager {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-                resolve(playlists);
+                return resolve(playlists);
               }
               reject(new ApiError(body.error));
             }
@@ -471,7 +464,7 @@ class PlaylistManager {
    * Get the current image associated with a specific playlist.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {string} [image] - The Base64 image encoded to upload as cover art.
-   * @returns {Promise}
+   * @returns {Promise<Image|Status|HTTPError|ApiError>}
    */
   cover(id, image) {
     const path = API + '/' + id + '/images';
@@ -495,10 +488,14 @@ class PlaylistManager {
         this.spotify.util.toJson(response).then((body) => {
           if (body) {
             if (response.status == 200) {
-              resolve(body);
+              return resolve(body);
+            } else if (body.error) {
+              reject(new ApiError(body.error));
             }
-            reject(new ApiError(body.error));
+          } else if (response.status == 200) {
+            return resolve({ status: response.status });
           }
+
           reject(new HTTPError(response));
         });
       });
@@ -509,7 +506,7 @@ class PlaylistManager {
    * Get Spotify catalog information about playlists.
    * @param {string} query - Your search query.
    * @param {SearchOptions} options
-   * @returns {Promise<Playlist[]>}
+   * @returns {Promise<Playlist[]|HTTPError|ApiError>}
    */
   search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -538,7 +535,7 @@ class PlaylistManager {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-                resolve(playlists);
+                return resolve(playlists);
               }
               reject(new ApiError(body.error));
             }

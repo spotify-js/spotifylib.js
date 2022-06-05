@@ -22,7 +22,7 @@ class AlbumManager {
   /**
    * Get Spotify catalog information for a single album.
    * @param {string} id - The Spotify ID of the album.
-   * @returns {Promise<Album>}
+   * @returns {Promise<Album|HTTPError|ApiError>}
    */
   get(id) {
     const path = API + '/' + id;
@@ -37,9 +37,9 @@ class AlbumManager {
             if (body) {
               if (response.status == 200) {
                 const album = new Album(this.spotify, body);
-                resolve(album);
+                return resolve(album);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -51,7 +51,7 @@ class AlbumManager {
    * Get Spotify catalog information about an album’s tracks.
    * @param {string} id - The Spotify ID of the album.
    * @param {LimitOptions} options
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   tracks(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -73,10 +73,9 @@ class AlbumManager {
                 const tracks = body.items.map(
                   (t) => new Track(this.spotify, t)
                 );
-
-                resolve(tracks);
+                return resolve(tracks);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -87,7 +86,7 @@ class AlbumManager {
   /**
    * Get a list of the albums saved in the current Spotify user's 'Your Music' library.
    * @param {LimitOptions} options
-   * @returns {Promise<Album[]>}
+   * @returns {Promise<Album[]|HTTPError|ApiError>}
    */
   saved({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -109,9 +108,9 @@ class AlbumManager {
                 const albums = body.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-                resolve(albums);
+                return resolve(albums);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -122,7 +121,7 @@ class AlbumManager {
   /**
    * Save one or more albums to the current user's 'Your Music' library.
    * @param {string|string[]} ids - A list of the Spotify IDs for the albums.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save(ids) {
     const options = qs.stringify({
@@ -153,7 +152,7 @@ class AlbumManager {
   /**
    * Remove one or more albums to the current user's 'Your Music' library.
    * @param {string|string[]} ids - A list of the Spotify IDs for the albums.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove(ids) {
     const options = qs.stringify({
@@ -184,7 +183,7 @@ class AlbumManager {
   /**
    * Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
    * @param {string} ids - A list of the Spotify IDs for the albums.
-   * @returns {Promise<boolean|boolean[]>}
+   * @returns {Promise<boolean|boolean[]|HTTPError|ApiError>}
    */
   starred(ids) {
     const options = qs.stringify({
@@ -205,7 +204,7 @@ class AlbumManager {
                 if (body.length == 1) {
                   resolve(body[0]);
                 }
-                reject(new HTTPError(response));
+                reject(new ApiError(response));
               }
               reject(new HTTPError(response));
             }
@@ -217,7 +216,7 @@ class AlbumManager {
   /**
    * Get a list of new album releases featured in Spotify.
    * @param {LimitOptions} options
-   * @returns {Promise<Album[]>}
+   * @returns {Promise<Album[]|HTTPError|ApiError>}
    */
   releases({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -239,9 +238,9 @@ class AlbumManager {
                 const albums = body.albums.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-                resolve(albums);
+                return resolve(albums);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
@@ -253,7 +252,7 @@ class AlbumManager {
    * Get Spotify catalog information about albums.
    * @param {string} query - Your search query.
    * @param {SearchOptions} options
-   * @returns {Promise<Album[]>}
+   * @returns {Promise<Album[]|HTTPError|ApiError>}
    */
   search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -282,9 +281,9 @@ class AlbumManager {
                 const albums = body.albums.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-                resolve(albums);
+                return resolve(albums);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });

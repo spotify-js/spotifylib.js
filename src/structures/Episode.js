@@ -19,7 +19,7 @@ class Episode extends Base {
 
   /**
    * Shortcut to save the episode.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save() {
     return this.spotify.episodes.save(this.id);
@@ -27,7 +27,7 @@ class Episode extends Base {
 
   /**
    * Shortcut to remove the episode.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove() {
     return this.spotify.episodes.remove(this.id);
@@ -35,7 +35,7 @@ class Episode extends Base {
 
   /**
    * Shortcut to check if a episodes saved in the current Spotify user's library.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   starred() {
     return this.spotify.episodes.starred(this.id);
@@ -44,7 +44,7 @@ class Episode extends Base {
   /**
    * Shortcut to queue an episode.
    * @param {string} device - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   queue(device) {
     return this.spotify.player.queue(this.uri, device);

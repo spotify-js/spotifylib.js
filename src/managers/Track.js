@@ -28,7 +28,7 @@ class TrackManager {
   /**
    * Get Spotify catalog information for a single track identified by its unique Spotify ID.
    * @param {string} id - The Spotify ID for the track.
-   * @returns {Promise<Track>}
+   * @returns {Promise<Track|HTTPError|ApiError>}
    */
   get(id) {
     const path = 'https://api.spotify.com/v1/tracks/' + id;
@@ -56,7 +56,7 @@ class TrackManager {
   /**
    * Get a list of the songs saved in the current Spotify user's 'Your Music' library.
    * @param {LimitOptions} options
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   saved({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -78,7 +78,7 @@ class TrackManager {
                 const tracks = body.items.map(
                   (t) => new Track(this.spotify, t)
                 );
-                resolve(tracks);
+                return resolve(tracks);
               }
               reject(new ApiError(body.error));
             }
@@ -91,7 +91,7 @@ class TrackManager {
   /**
    * Save one or more tracks to the current user's 'Your Music' library.
    * @param {string|string[]} ids - A list of the Spotify IDs.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   save(ids) {
     const options = qs.stringify({
@@ -122,7 +122,7 @@ class TrackManager {
   /**
    * Remove one or more tracks from the current user's 'Your Music' library.
    * @param {string|string[]} ids - A list of the Spotify IDs.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   remove(ids) {
     const options = qs.stringify({
@@ -153,7 +153,7 @@ class TrackManager {
   /**
    * Check if one or more tracks is already saved in the current Spotify user's 'Your Music' library.
    * @param {string|string[]} ids
-   * @returns {Promise<boolean|boolean[]>}
+   * @returns {Promise<boolean|boolean[]|HTTPError|ApiError>}
    */
   starred(ids) {
     const options = qs.stringify({
@@ -187,7 +187,7 @@ class TrackManager {
    * Get Spotify catalog information about tracks.
    * @param {string} query - Your search query.
    * @param {SearchOptions} options
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   search(query, { external = false, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -216,8 +216,7 @@ class TrackManager {
                 const tracks = body.tracks.items.map(
                   (p) => new Track(this.spotify, p)
                 );
-
-                resolve(tracks);
+                return resolve(tracks);
               }
               reject(new ApiError(body.error));
             }
@@ -230,7 +229,7 @@ class TrackManager {
   /**
    * Recommendations are generated based on the available information for a given seed entity and matched against similar artists and tracks.
    * @param {RecommendedOptions} options
-   * @returns {Promise<Tracks[]>}
+   * @returns {Promise<Tracks[]|HTTPError|ApiError>}
    */
   recommendations({
     seeds = {},
@@ -292,7 +291,7 @@ class TrackManager {
                 const tracks = body.tracks.map(
                   (t) => new Track(this.spotify, t)
                 );
-                resolve(tracks);
+                return resolve(tracks);
               }
               reject(new ApiError(body.error));
             }

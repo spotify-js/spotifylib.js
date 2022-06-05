@@ -21,7 +21,7 @@ class PlayerManager {
   /**
    * Get information about the user's current playback state.
    * @param {AdditionalTypes[]} [types=['track']] - The types that the client supports. (track, episode)
-   * @returns {Promise}
+   * @returns {Promise<State|HTTPError|ApiError>}
    */
   state(types = ['track']) {
     const options = qs.stringify({
@@ -38,6 +38,9 @@ class PlayerManager {
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
+              if (response.status == 200) {
+                return resolve(body);
+              }
               reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
@@ -50,7 +53,7 @@ class PlayerManager {
    * Transfer playback to a new device and determine if it should start playing.
    * @param {string} id - The id of the device to transfer the playback to.
    * @param {boolean} [play=true] - The playback continues after transfer.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   transfer(id, play = true) {
     const body = {
@@ -80,7 +83,7 @@ class PlayerManager {
 
   /**
    * Get information about a user’s available devices.
-   * @returns {Promise}
+   * @returns {Promise<Device[]|HTTPError|ApiError>}
    */
   devices() {
     const path = API + '/devices';
@@ -106,7 +109,7 @@ class PlayerManager {
   /**
    * Get the object currently being played on the user's Spotify account.
    * @param {AdditionalTypes[]} [types=['track']] - The types that the client supports.
-   * @returns {Promise<Track>}
+   * @returns {Promise<Track|HTTPError|ApiError>}
    */
   current(types = ['track']) {
     const options = qs.stringify({
@@ -125,7 +128,7 @@ class PlayerManager {
             if (body) {
               if (response.status == 200) {
                 const track = new Track(this.spotify, body);
-                resolve(track);
+                return resolve(track);
               }
               reject(new ApiError(body.error));
             }
@@ -139,7 +142,7 @@ class PlayerManager {
    * Start a new context.
    * @param {ContextURI} uri - The context uri to start playing.
    * @param {StartOptions} [options]
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   start(uri, { device, offset = 0, ms = 0 } = {}) {
     const options = qs.stringify({
@@ -179,7 +182,7 @@ class PlayerManager {
   /**
    * Resume current playback on the user's active device.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   resume(device) {
     const options = qs.stringify({
@@ -210,7 +213,7 @@ class PlayerManager {
   /**
    * Pause playback on the user's account.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   pause(device) {
     const options = qs.stringify({
@@ -241,7 +244,7 @@ class PlayerManager {
   /**
    * Skips to next track in the user’s queue.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   next(device) {
     const options = qs.stringify({
@@ -272,7 +275,7 @@ class PlayerManager {
   /**
    * Skips to previous track in the user’s queue.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   back(device) {
     const options = qs.stringify({
@@ -304,7 +307,7 @@ class PlayerManager {
    * Seeks to the given position in the user’s currently playing track.
    * @param {number} ms - The position in milliseconds to seek to. Passing in a position that is greater than the length of the track will cause the player to start playing the next song.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   seek(ms, device) {
     const opts = {
@@ -341,7 +344,7 @@ class PlayerManager {
    *Set the repeat mode for the user's playback. Options are repeat-track, repeat-context, and off.
    * @param {RepeatStates} state - The state to set the user's currently active device repeat mode to.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   repeat(state, device) {
     const opts = {
@@ -378,7 +381,7 @@ class PlayerManager {
    * Set the volume for the user’s current playback device.
    * @param {number} vol - The volume to set. Must be a value from 0 to 100 inclusive.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   volume(vol, device) {
     const opts = {
@@ -415,7 +418,7 @@ class PlayerManager {
    * Toggle shuffle on or off for user’s playback.
    * @param {boolean} state - To shuffle the user's playback.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   shuffle(state, device) {
     const opts = {
@@ -451,7 +454,7 @@ class PlayerManager {
   /**
    * Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
    * @param {RecentOptions} options
-   * @returns {Promise<Track[]|null>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   recent({ limit = 20, after, before } = {}) {
     if (after && before) {
@@ -483,7 +486,7 @@ class PlayerManager {
                 const tracks = body.items.map(
                   (t) => new Track(this.spotify, t.track)
                 );
-                resolve(tracks);
+                return resolve(tracks);
               }
               reject(new ApiError(body.error));
             }
@@ -497,7 +500,7 @@ class PlayerManager {
    * Add an item to the end of the user's current playback queue.
    * @param {ContextURI} uri - The uri of the item to add to the queue. Must be a track or an episode uri.
    * @param {string} [device] - The id of the device this command is targeting. If not supplied, the user's currently active device is the target.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   queue(uri, device) {
     const opts = {

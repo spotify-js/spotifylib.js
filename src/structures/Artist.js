@@ -20,7 +20,7 @@ class Artist extends Base {
   /**
    * Shortcut to get the albums of an artist.
    * @param {ArtistAlbumsOptions} options
-   * @returns {Promise<Album[]>}
+   * @returns {Promise<Album[]|HTTPError|ApiError>}
    */
   albums(options = {}) {
     return this.spotify.artists.albums(this.id, options);
@@ -28,7 +28,7 @@ class Artist extends Base {
 
   /**
    * Shortcut to follow the artist.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   follow() {
     return this.spotify.artists.follow(this.id);
@@ -36,7 +36,7 @@ class Artist extends Base {
 
   /**
    * Shortcut to unfollow the artist.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   unfollow() {
     return this.spotify.artists.unfollow(this.id);
@@ -44,7 +44,7 @@ class Artist extends Base {
 
   /**
    * Shortcut to check if the current user is following the artist.
-   * @returns {Promise}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   following() {
     return this.spotify.artists.following(this.id);
@@ -53,7 +53,7 @@ class Artist extends Base {
   /**
    * Shortcut to get the top tracks of an artist.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.
-   * @returns {Promise<Track[]>}
+   * @returns {Promise<Track[]|HTTPError|ApiError>}
    */
   top(country) {
     return this.spotify.artists.top(this.id, country);
@@ -61,7 +61,7 @@ class Artist extends Base {
 
   /**
    * Shortcut to get related artists.
-   * @returns {Promise<Artist[]>}
+   * @returns {Promise<Artist[]|HTTPError|ApiError>}
    */
   related() {
     return this.spotify.artists.related(this.id);

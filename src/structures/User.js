@@ -19,7 +19,7 @@ class User extends Base {
 
   /**
    * Shortcut to follow the user.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   follow() {
     return this.spotify.users.follow(this.id);
@@ -27,7 +27,7 @@ class User extends Base {
 
   /**
    * Shortcut to unfollow the user.
-   * @returns {Promise}
+   * @returns {Promise<Status|HTTPError|ApiError>}
    */
   unfollow() {
     return this.spotify.users.unfollow(this.id);
@@ -35,7 +35,7 @@ class User extends Base {
 
   /**
    * Shortcut to check if the current user is following the user.
-   * @returns {Promise}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   following() {
     return this.spotify.users.following(this.id);
