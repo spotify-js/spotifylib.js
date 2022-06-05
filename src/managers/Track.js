@@ -4,6 +4,7 @@ const Audio = require('../managers/Audio.js');
 
 const API = 'https://api.spotify.com/v1/me/tracks';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class TrackManager {
   /**
@@ -42,9 +43,9 @@ class TrackManager {
             if (body) {
               if (response.status == 200) {
                 const track = new Track(this.spotify, body);
-                resolve(track);
+                return resolve(track);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -79,7 +80,7 @@ class TrackManager {
                 );
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -106,10 +107,14 @@ class TrackManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -133,10 +138,14 @@ class TrackManager {
           method: 'delete',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -166,7 +175,7 @@ class TrackManager {
                   resolve(body[0]);
                 }
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -210,7 +219,7 @@ class TrackManager {
 
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -285,7 +294,7 @@ class TrackManager {
                 );
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });

@@ -4,6 +4,7 @@ const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/playlists';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError');
 
 class PlaylistManager {
   /**
@@ -44,7 +45,7 @@ class PlaylistManager {
                 const playlist = new Playlist(this.spotify, body);
                 resolve(playlist);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -76,10 +77,14 @@ class PlaylistManager {
           body,
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -118,7 +123,7 @@ class PlaylistManager {
 
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -154,7 +159,7 @@ class PlaylistManager {
               if (response.status == 201) {
                 resolve({ snapshot: body.snapshot_id });
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -190,7 +195,7 @@ class PlaylistManager {
               if (response.status == 200) {
                 resolve({ snapshot: body.snapshot_id });
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -232,7 +237,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -269,7 +274,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -300,7 +305,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -334,7 +339,7 @@ class PlaylistManager {
                   resolve(body[0]);
                 }
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -368,10 +373,17 @@ class PlaylistManager {
           body,
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 201) {
+                const playlist = new Playlist(this.spotify, body);
+                return resolve(playlist);
+              }
+              reject(new ApiError(body.error));
+            }
+
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -410,7 +422,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -447,7 +459,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -481,8 +493,11 @@ class PlaylistManager {
     return new Promise((resolve, reject) => {
       this.spotify.util.fetch(opts).then((response) => {
         this.spotify.util.toJson(response).then((body) => {
-          if (response.ok) {
-            resolve(body);
+          if (body) {
+            if (response.status == 200) {
+              resolve(body);
+            }
+            reject(new ApiError(body.error));
           }
           reject(new HTTPError(response));
         });
@@ -525,7 +540,7 @@ class PlaylistManager {
                 );
                 resolve(playlists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });

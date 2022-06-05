@@ -5,6 +5,7 @@ const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/artists';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class ArtistManager {
   /**
@@ -39,7 +40,7 @@ class ArtistManager {
                 const artist = new Artist(this.spotify, body);
                 resolve(artist);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -82,7 +83,7 @@ class ArtistManager {
   
                 resolve(albums);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -110,10 +111,14 @@ class ArtistManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -138,10 +143,14 @@ class ArtistManager {
           method: 'delete',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -173,7 +182,7 @@ class ArtistManager {
                   resolve(body[0]);
                 }
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -208,7 +217,7 @@ class ArtistManager {
                 );
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -238,7 +247,7 @@ class ArtistManager {
                 );
                 resolve(artists);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -281,7 +290,7 @@ class ArtistManager {
                 );
                 resolve(artists);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });

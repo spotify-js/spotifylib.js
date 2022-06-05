@@ -1,5 +1,6 @@
 const API = 'https://api.spotify.com/v1';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class AudioManager {
   /**
@@ -54,7 +55,10 @@ class AudioManager {
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
-              resolve(body);
+              if (response.status == 200) {
+                resolve(body);
+              }
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });

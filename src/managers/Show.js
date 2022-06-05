@@ -4,6 +4,7 @@ const Episode = require('../structures/Episode.js');
 
 const API = 'https://api.spotify.com/v1/me/shows';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class ShowManager {
   /**
@@ -38,7 +39,7 @@ class ShowManager {
                 const show = new Show(this.spotify, body);
                 resolve(show);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -75,7 +76,7 @@ class ShowManager {
                 );
                 resolve(episodes);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -110,7 +111,7 @@ class ShowManager {
                 );
                 resolve(shows);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -137,10 +138,14 @@ class ShowManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -164,10 +169,14 @@ class ShowManager {
           method: 'delete',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -197,7 +206,7 @@ class ShowManager {
                   resolve(body[0]);
                 }
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -241,7 +250,7 @@ class ShowManager {
 
                 resolve(shows);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });

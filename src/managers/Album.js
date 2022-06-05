@@ -4,6 +4,7 @@ const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/albums';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class AlbumManager {
   /**
@@ -38,7 +39,7 @@ class AlbumManager {
                 const album = new Album(this.spotify, body);
                 resolve(album);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -75,7 +76,7 @@ class AlbumManager {
 
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -110,7 +111,7 @@ class AlbumManager {
                 );
                 resolve(albums);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -137,10 +138,14 @@ class AlbumManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -164,10 +169,14 @@ class AlbumManager {
           method: 'delete',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -196,7 +205,7 @@ class AlbumManager {
                 if (body.length == 1) {
                   resolve(body[0]);
                 }
-                resolve(body);
+                reject(new HTTPError(response));
               }
               reject(new HTTPError(response));
             }
@@ -232,7 +241,7 @@ class AlbumManager {
                 );
                 resolve(albums);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });
@@ -275,7 +284,7 @@ class AlbumManager {
                 );
                 resolve(albums);
               }
-              resolve(body);
+              reject(new HTTPError(response));
             }
             reject(new HTTPError(response));
           });

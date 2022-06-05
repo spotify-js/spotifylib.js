@@ -3,6 +3,7 @@ const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/me/player';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class PlayerManager {
   /**
@@ -37,7 +38,7 @@ class PlayerManager {
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -65,10 +66,14 @@ class PlayerManager {
           body,
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -87,8 +92,10 @@ class PlayerManager {
         })
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
-            if (response.ok) {
-              resolve(body);
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -120,7 +127,7 @@ class PlayerManager {
                 const track = new Track(this.spotify, body);
                 resolve(track);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -157,10 +164,14 @@ class PlayerManager {
           body,
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -184,10 +195,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -211,10 +226,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -238,10 +257,14 @@ class PlayerManager {
           method: 'post',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -265,10 +288,14 @@ class PlayerManager {
           method: 'post',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -298,10 +325,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -331,10 +362,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -364,10 +399,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -397,10 +436,14 @@ class PlayerManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -442,7 +485,7 @@ class PlayerManager {
                 );
                 resolve(tracks);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -475,10 +518,14 @@ class PlayerManager {
           method: 'post',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }

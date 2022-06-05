@@ -5,6 +5,7 @@ const User = require('../structures/User.js');
 
 const API = 'https://api.spotify.com/v1/me';
 const HTTPError = require('../HTTPError.js');
+const ApiError = require('../ApiError.js');
 
 class UserManager {
   /**
@@ -39,7 +40,7 @@ class UserManager {
                 const user = new User(this.spotify, body);
                 resolve(user);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -81,7 +82,7 @@ class UserManager {
 
                 resolve(result);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -121,7 +122,7 @@ class UserManager {
                 );
                 resolve(artists);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -149,10 +150,14 @@ class UserManager {
           method: 'put',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 204) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -177,10 +182,14 @@ class UserManager {
           method: 'delete',
         })
         .then((response) => {
-          if (response.ok) {
-            resolve({ status: response.status });
-          }
-          reject(new HTTPError(response));
+          this.spotify.util.toJson(response).then((body) => {
+            if (response.status == 200) {
+              resolve({ status: response.status });
+            } else if (body) {
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -212,7 +221,7 @@ class UserManager {
                   resolve(body[0]);
                 }
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -237,7 +246,7 @@ class UserManager {
                 const user = new User(this.spotify, body);
                 resolve(user);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
