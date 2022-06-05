@@ -1,4 +1,5 @@
 const qs = require('querystring');
+const Album = require('../structures/Album.js');
 const Artist = require('../structures/Artist.js');
 const Track = require('../structures/Track.js');
 
@@ -26,21 +27,22 @@ class ArtistManager {
     const path = API + '/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Artist(this.spotify, body);
+                const artist = new Artist(this.spotify, body);
+                resolve(artist);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -65,25 +67,25 @@ class ArtistManager {
     const path = API + '/' + id + '/albums?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then(body => {
+            if (body) {
+              if (response.status == 200) {
                 const albums = body.items.map(
-                  (a) => new Artist(this.spotify, a)
+                  (a) => new Album(this.spotify, a)
                 );
-
-                return albums;
+  
+                resolve(albums);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({status: response.status});
+          });
+        });
     });
   }
 
@@ -101,25 +103,24 @@ class ArtistManager {
     const path = API + '/' + id + '/top-tracks?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.tracks) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const tracks = body.tracks.map(
                   (t) => new Track(this.spotify, t)
                 );
-
-                return tracks;
+                resolve(tracks);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -132,25 +133,24 @@ class ArtistManager {
     const path = API + '/' + id + '/related-artists';
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.artists) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const artists = body.artists.map(
                   (a) => new Artist(this.spotify, a)
                 );
-
-                return artists;
+                resolve(artists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -176,25 +176,24 @@ class ArtistManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.artists) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const artists = body.artists.items.map(
                   (a) => new Artist(this.spotify, a)
                 );
-
-                return artists;
+                resolve(artists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

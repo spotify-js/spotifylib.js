@@ -19,16 +19,17 @@ class Artist extends Base {
 
   /**
    * Shortcut to get the albums of an artist.
-   * @returns {Promise}
+   * @param {ArtistAlbumsOptions} options
+   * @returns {Promise<Album[]>}
    */
-  albums() {
-    return this.spotify.artists.albums(this.id);
+  albums(options = {}) {
+    return this.spotify.artists.albums(this.id, options);
   }
 
   /**
    * Shortcut to get the top tracks of an artist.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.
-   * @returns {Promise}
+   * @returns {Promise<Track[]>}
    */
   top(country) {
     return this.spotify.artists.top(this.id, country);
@@ -36,7 +37,7 @@ class Artist extends Base {
 
   /**
    * Shortcut to get related artists.
-   * @returns {Promise}
+   * @returns {Promise<Artist[]>}
    */
   related() {
     return this.spotify.artists.related(this.id);

@@ -32,21 +32,22 @@ class PlaylistManager {
     const path = API + '/' + id + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Playlist(this.spotify, body);
+                const playlist = new Playlist(this.spotify, body);
+                resolve(playlist);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -67,15 +68,13 @@ class PlaylistManager {
     const path = API + '/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-            body,
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+          body,
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -83,7 +82,7 @@ class PlaylistManager {
    * Get full details of the items of a playlist owned by a Spotify user.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {PlaylistTracksOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Track[]>}
    */
   tracks(id, { types = ['track'], fields, limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -96,25 +95,28 @@ class PlaylistManager {
     const path = API + '/' + id + '/tracks?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
-                const tracks = body.items.map(
-                  (t) => new Track(this.spotify, t)
-                );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const tracks = body.items.map((t) => {
+                  const track = new Track(this.spotify, t);
+                  Object.assign(track, track.track);
+                  delete track.track;
+                  return track;
+                });
 
-                return tracks;
+                resolve(tracks);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -134,21 +136,25 @@ class PlaylistManager {
     const path = API + '/' + id + '/tracks';
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'post',
-            body,
-          })
-          .then((response) => {
-            return response
-              .json()
-              .then((body) =>
-                Object({ status: response.status, snapshot: body.snapshot_id })
-              );
-          })
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'post',
+          body,
+        })
+        .then((response) => {
+          if (response.body) {
+            response.json().then((body) => {
+              if (response.status == 201) {
+                resolve({ snapshot: body.snapshot_id });
+              }
+
+              resolve(body);
+            });
+          } else {
+            resolve({ status: response.status });
+          }
+        });
     });
   }
 
@@ -168,21 +174,25 @@ class PlaylistManager {
     const path = API + '/' + id + '/tracks';
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'delete',
-            body,
-          })
-          .then((response) => {
-            return response
-              .json()
-              .then((body) =>
-                Object({ status: response.status, snapshot: body.snapshot_id })
-              );
-          })
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+          body,
+        })
+        .then((response) => {
+          if (response.body) {
+            response.json().then((body) => {
+              if (response.status == 200) {
+                resolve({ snapshot: body.snapshot_id });
+              }
+
+              resolve(body);
+            });
+          } else {
+            resolve({ status: response.status });
+          }
+        });
     });
   }
 
@@ -190,7 +200,7 @@ class PlaylistManager {
    * Get a list of the playlists owned or followed by the current Spotify user.
    * @param {string} [id] - The user's Spotify user ID - if not provided it will default to the current user.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Playlist[]>}
    */
   users(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -207,25 +217,24 @@ class PlaylistManager {
     }
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const playlists = body.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-
-                return playlists;
+                resolve(playlists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -248,24 +257,31 @@ class PlaylistManager {
     const path = 'https://api.spotify.com/v1/users/' + id + '/playlists?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'post',
-            body,
-          })
-          .then((response) =>
-            response.json().then((data) => new Playlist(this.spotify, data))
-          )
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'post',
+          body,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 201) {
+                const playlist = new Playlist(this.spotify, body);
+                resolve(playlist);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get a list of Spotify featured playlists.
    * @param {FeaturedOptions} [options]
-   * @returns {Promise}
+   * @returns {Promise<Playlist[]>}
    */
   featured({ limit = 20, locale, offset = 0, timestamp } = {}) {
     const opts = {
@@ -283,25 +299,24 @@ class PlaylistManager {
     const path = 'https://api.spotify.com/v1/browse/featured-playlists?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.playlists) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-
-                return playlists;
+                resolve(playlists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -309,7 +324,7 @@ class PlaylistManager {
    * Get a list of Spotify playlists tagged with a particular category.
    * @param {string} id - The Spotify category ID for the category.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Playlist[]>}
    */
   categories(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -321,25 +336,24 @@ class PlaylistManager {
     const path = 'https://api.spotify.com/v1/browse/categories/' + id + '/playlists?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.playlists) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-
-                return playlists;
+                resolve(playlists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -367,15 +381,14 @@ class PlaylistManager {
     }
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util.fetch(opts).then((response) => {
-          if (response.status == 200) {
-            return response.json();
+      this.spotify.util.fetch(opts).then((response) => {
+        this.spotify.util.toJson(response).then((body) => {
+          if (body) {
+            resolve(body);
           }
-
-          return Object({ status: response.status });
-        })
-      );
+          resolve({ status: response.status });
+        });
+      });
     });
   }
 
@@ -401,25 +414,24 @@ class PlaylistManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.playlists) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const playlists = body.playlists.items.map(
                   (p) => new Playlist(this.spotify, p)
                 );
-
-                return playlists;
+                resolve(playlists);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

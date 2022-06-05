@@ -13,9 +13,11 @@ class Playlist extends Base {
 
     /**
      * The tracks of the playlist.
-     * @type {Track[]}
+     * @type {Track[]|undefined}
      */
-    this.tracks = data.tracks.items.map((t) => new Track(spotify, t));
+    if (data.tracks && data.tracks.items) {
+      this.tracks = data.tracks.items.map((t) => new Track(spotify, t));
+    }
 
     /**
      * The spotify client.
@@ -39,7 +41,7 @@ class Playlist extends Base {
    * @returns {Promise}
    */
   modify(options = {}) {
-    return this.spotify.playlist.modify(this.id, options);
+    return this.spotify.playlists.modify(this.id, options);
   }
 
   /**

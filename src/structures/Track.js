@@ -1,4 +1,5 @@
 const Base = require('../Base.js');
+const Album = require('./Album.js');
 const Audio = require('./Audio.js');
 
 class Track extends Base {
@@ -16,6 +17,14 @@ class Track extends Base {
      * @type {Spotify}
      */
     this.spotify = spotify;
+
+    /**
+     * The album of the track.
+     * @type {Album|undefined}
+     */
+    if (data.album) {
+      this.album = new Album(spotify, data.album);
+    }
 
     /**
      * Shortcut to the tracks audio.
@@ -45,7 +54,7 @@ class Track extends Base {
    * @returns {Promise}
    */
   starred() {
-    return this.spotify.tracks.favorited(this.id);
+    return this.spotify.tracks.starred(this.id);
   }
 
   /**

@@ -19,7 +19,7 @@ class Audio extends Base {
 
   /**
    * Shortcut to the track's audio features.
-   * @returns {Promise}
+   * @returns {Promise<Audio>}
    */
   features() {
     return this.spotify.tracks.audio.features(this.id);
@@ -27,7 +27,7 @@ class Audio extends Base {
 
   /**
    * Shortcut to the track's audio analysis.
-   * @returns {Promise}
+   * @returns {Promise<Audio>}
    */
   analysis() {
     return this.spotify.tracks.audio.analysis(this.id);

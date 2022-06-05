@@ -32,28 +32,29 @@ class TrackManager {
     const path = 'https://api.spotify.com/v1/tracks/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Track(this.spotify, body);
+                const track = new Track(this.spotify, body);
+                resolve(track);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get a list of the songs saved in the current Spotify user's 'Your Music' library.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Track[]>}
    */
   saved({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -64,25 +65,24 @@ class TrackManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const tracks = body.items.map(
                   (t) => new Track(this.spotify, t)
                 );
-
-                return tracks;
+                resolve(tracks);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -99,14 +99,12 @@ class TrackManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -123,14 +121,12 @@ class TrackManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'delete',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -147,21 +143,23 @@ class TrackManager {
     const path = API + '/contains?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (Array.isArray(body) && body.length == 0) {
-                return body[0];
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -187,32 +185,32 @@ class TrackManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.tracks) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const tracks = body.tracks.items.map(
                   (p) => new Track(this.spotify, p)
                 );
 
-                return tracks;
+                resolve(tracks);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Recommendations are generated based on the available information for a given seed entity and matched against similar artists and tracks.
    * @param {RecommendedOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Tracks[]>}
    */
   recommendations({
     seeds = {},
@@ -263,13 +261,24 @@ class TrackManager {
     const path = 'https://api.spotify.com/v1/recommendations?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const tracks = body.tracks.map(
+                  (t) => new Track(this.spotify, t)
+                );
+                resolve(tracks);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

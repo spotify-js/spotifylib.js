@@ -26,21 +26,22 @@ class AlbumManager {
     const path = API + '/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Album(this.spotify, body);
+                const album = new Album(this.spotify, body);
+                resolve(album);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -59,25 +60,25 @@ class AlbumManager {
     const path = API + '/' + id + '/tracks?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const tracks = body.items.map(
                   (t) => new Track(this.spotify, t)
                 );
 
-                return tracks;
+                resolve(tracks);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -92,28 +93,27 @@ class AlbumManager {
       offset,
     });
 
-    const path = API + '?' + options;
+    const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const albums = body.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-
-                return albums;
+                resolve(albums);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -130,14 +130,12 @@ class AlbumManager {
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -154,14 +152,12 @@ class AlbumManager {
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'delete',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -175,24 +171,26 @@ class AlbumManager {
       ids: typeof ids == 'string' ? [ids] : ids.join(','),
     });
 
-    const path = API + '/contains?' + options;
+    const path = 'https://api.spotify.com/v1/me/albums/contains?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (Array.isArray(body) && body.length == 0) {
-                return body[0];
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
+                resolve(body);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve({ status: response.status });
+            }
+          });
+        });
     });
   }
 
@@ -210,25 +208,24 @@ class AlbumManager {
     const path = 'https://api.spotify.com/v1/browse/new-releases?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.albums.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const albums = body.albums.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-
-                return albums;
+                resolve(albums);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -254,25 +251,24 @@ class AlbumManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.albums) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const albums = body.albums.items.map(
                   (a) => new Album(this.spotify, a)
                 );
-
-                return albums;
+                resolve(albums);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

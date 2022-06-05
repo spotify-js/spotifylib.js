@@ -1,4 +1,5 @@
 const qs = require('querystring');
+const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/me/player';
 
@@ -28,13 +29,18 @@ class PlayerManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -51,15 +57,13 @@ class PlayerManager {
     };
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path: API,
-            method: 'put',
-            body,
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path: API,
+          method: 'put',
+          body,
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -71,36 +75,50 @@ class PlayerManager {
     const path = API + '/devices';
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get the object currently being played on the user's Spotify account.
    * @param {AdditionalTypes[]} [types=['track']] - The types that the client supports.
-   * @returns {Promise}
+   * @returns {Promise<Track>}
    */
   current(types = ['track']) {
     const options = qs.stringify({
-      additional_types: types,
+      additional_types: typeof types == 'string' ? [types] : types.join(','),
     });
 
     const path = API + '/currently-playing?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const track = new Track(this.spotify, body);
+                resolve(track);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -126,15 +144,13 @@ class PlayerManager {
     const path = API + '/play?' + (device ? options : '');
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-            body,
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+          body,
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -151,14 +167,12 @@ class PlayerManager {
     const path = API + '/play?' + (device ? options : '');
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -175,14 +189,12 @@ class PlayerManager {
     const path = API + '/pause?' + (device ? options : '');
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -199,14 +211,12 @@ class PlayerManager {
     const path = API + '/next?' + (device ? options : '');
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'post',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'post',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -223,14 +233,12 @@ class PlayerManager {
     const path = API + '/previous?' + (device ? options : '');
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'post',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'post',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -253,14 +261,12 @@ class PlayerManager {
     const path = API + '/seek?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -283,14 +289,12 @@ class PlayerManager {
     const path = API + '/repeat?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -313,14 +317,12 @@ class PlayerManager {
     const path = API + '/volume?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -343,23 +345,21 @@ class PlayerManager {
     const path = API + '/shuffle?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
   /**
    * Get tracks from the current user's recently played tracks. Note: Currently doesn't support podcast episodes.
    * @param {RecentOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Track[]|null>}
    */
-  recent(limit = 20, after, before) {
+  recent({ limit = 20, after, before } = {}) {
     if (after && before) {
       throw new Error('Only one of `after` or `before` can be provided.');
     }
@@ -378,13 +378,24 @@ class PlayerManager {
     const path = API + '/recently-played?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const tracks = body.items.map(
+                  (t) => new Track(this.spotify, t.track)
+                );
+                resolve(tracks);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -407,14 +418,12 @@ class PlayerManager {
     const path = API + '/queue?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'post',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'post',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 }

@@ -38,7 +38,7 @@ class Episode extends Base {
    * @returns {Promise}
    */
   starred() {
-    return this.spotify.episodes.favorited(this.id);
+    return this.spotify.episodes.starred(this.id);
   }
 
   /**

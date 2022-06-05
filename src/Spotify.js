@@ -84,56 +84,56 @@ class Spotify {
 
   /**
    * Retrieve a list of available genres seed
-   * @returns {Promise}
+   * @returns {Promise<string[]>}
    */
   genres() {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
 
     return new Promise((resolve) => {
-      resolve(
-        this.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.genres) {
+      this.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const genres = body.genres;
-                return genres;
+                resolve(genres);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get the list of markets where Spotify is available.
-   * @returns {Promise}
+   * @returns {Promise<string[]>}
    */
   markets() {
     const path = 'https://api.spotify.com/v1/markets ';
 
     return new Promise((resolve) => {
-      resolve(
-        this.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.markets) {
+      this.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const markets = body.markets;
-                return markets;
+                resolve(markets);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 

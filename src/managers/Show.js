@@ -20,27 +20,28 @@ class ShowManager {
   /**
    * Get Spotify catalog information for a single show identified by its unique Spotify ID.
    * @param {string} id - The Spotify ID for the show.
-   * @returns {Promise}
+   * @returns {Promise<Show>}
    */
   get(id) {
     const path = 'https://api.spotify.com/v1/shows/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Show(this.spotify, body);
+                const show = new Show(this.spotify, body);
+                resolve(show);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -48,7 +49,7 @@ class ShowManager {
    * Get Spotify catalog information about an show’s episodes.
    * @param {string} id - The Spotify ID for the show.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Episode[]>}
    */
   episodes(id, { limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -60,32 +61,31 @@ class ShowManager {
     const path = 'https://api.spotify.com/v1/shows/' + id + '/episodes?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const episodes = body.items.map(
                   (e) => new Episode(this.spotify, e)
                 );
-
-                return episodes;
+                resolve(episodes);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get a list of shows saved in the current Spotify user's library.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Show[]>}
    */
   users({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -96,25 +96,24 @@ class ShowManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const shows = body.items.map(
                   (s) => new Episode(this.spotify, s)
                 );
-
-                return shows;
+                resolve(shows);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -131,14 +130,12 @@ class ShowManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -155,14 +152,12 @@ class ShowManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'delete',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -179,21 +174,23 @@ class ShowManager {
     const path = API + '/contains?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (Array.isArray(body) && body.length == 0) {
-                return body[0];
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -219,25 +216,25 @@ class ShowManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.shows) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const shows = body.shows.items.map(
                   (p) => new Show(this.spotify, p)
                 );
 
-                return shows;
+                resolve(shows);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

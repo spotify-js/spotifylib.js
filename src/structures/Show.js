@@ -13,9 +13,11 @@ class Show extends Base {
 
     /**
      * The episdoes of the show.
-     * @type {Show[]}
+     * @type {Show[]|undefined}
      */
-    this.episodes = data.episdoes.items.map((e) => new Episode(spotify, e));
+    if (data.episodes && data.episodes.items) {
+      this.episodes = data.episodes.items.map((e) => new Episode(spotify, e));
+    }
 
     /**
      * The spotify client.
@@ -27,6 +29,7 @@ class Show extends Base {
   /**
    * Shortcut to play the show.
    * @param {StartOptions} options
+   * @returns {Promise}
    */
   play(options = {}) {
     return this.spotify.player.start(this.uri, options);
@@ -53,7 +56,7 @@ class Show extends Base {
    * @returns {Promise}
    */
   starred() {
-    return this.spotify.tracks.favorited(this.id);
+    return this.spotify.tracks.starred(this.id);
   }
 }
 

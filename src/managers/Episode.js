@@ -25,28 +25,29 @@ class EpisodeManager {
     const path = 'https://api.spotify.com/v1/episodes/' + id;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
-                return new Episode(this.spotify, body);
+                const episode = new Episode(this.spotify, body);
+                resolve(episode);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get a list of the episodes saved in the current Spotify user's library.
    * @param {LimitOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Episode[]>}
    */
   users({ limit = 20, offset = 0 } = {}) {
     const options = qs.stringify({
@@ -57,25 +58,24 @@ class EpisodeManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.items) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const episodes = body.items.map(
                   (t) => new Episode(this.spotify, t)
                 );
-
-                return episodes;
+                resolve(episodes);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -92,14 +92,12 @@ class EpisodeManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'put',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -116,14 +114,12 @@ class EpisodeManager {
     const path = API + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-            method: 'delete',
-          })
-          .then((response) => Object({ status: response.status }))
-      );
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
     });
   }
 
@@ -140,21 +136,21 @@ class EpisodeManager {
     const path = API + '/contains?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (Array.isArray(body) && body.length == 0) {
-                return body[0];
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (body.length == 1) {
+                resolve(body[0]);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
@@ -180,25 +176,24 @@ class EpisodeManager {
     const path = 'https://api.spotify.com/v1/search?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.episodes) {
-                const episdoes = body.episodes.items.map(
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const episodes = body.episodes.items.map(
                   (e) => new Episode(this.spotify, e)
                 );
-
-                return episdoes;
+                resolve(episodes);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

@@ -20,7 +20,7 @@ class CategoryManager {
    * @param {string} id - The Spotify category ID for the category.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.
    * @param {string} [locale] - The desired language, consisting of an ISO 639-1 language code and an ISO 3166-1 alpha-2 country code, joined by an underscore. For example: es_MX.
-   * @returns {Promise}
+   * @returns {Promise<Category>}
    */
   get(id, country, locale) {
     const opts = {};
@@ -32,20 +32,25 @@ class CategoryManager {
     const path = API + '/browse/categories/' + id + '?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) => response.json())
-      );
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 
   /**
    * Get a list of categories used to tag items in Spotify.
    * @param {CategoryOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Category[]>}
    */
   all({ country, locale, limit = 20, offset = 0 } = {}) {
     const opts = {
@@ -60,22 +65,22 @@ class CategoryManager {
     const path = API + '/browse/categories?' + options;
 
     return new Promise((resolve) => {
-      resolve(
-        this.spotify.util
-          .fetch({
-            path,
-          })
-          .then((response) =>
-            response.json().then((body) => {
-              if (body.categories) {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
                 const categories = body.categories.items;
-                return categories;
+                resolve(categories);
               }
-
-              return body;
-            })
-          )
-      );
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
     });
   }
 }

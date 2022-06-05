@@ -1,5 +1,4 @@
 const Base = require('../Base.js');
-const Track = require('../structures/Track.js');
 
 class Album extends Base {
   /**
@@ -13,9 +12,10 @@ class Album extends Base {
 
     /**
      * The tracks of the album.
-     * @type {Track[]}
+     * @type {Track[]|undefined}
      */
-    if (data.tracks) {
+    if (data.tracks && data.tracks.items) {
+      const Track = require('./Track.js');
       this.tracks = data.tracks.items.map((t) => new Track(spotify, t));
     }
 
@@ -29,7 +29,7 @@ class Album extends Base {
   /**
    * Shortcut to play the album.
    * @param {StartOptions} options
-   * @returns {Promise}
+   * @returns {Promise<Album>}
    */
   play(options = {}) {
     return this.spotify.player.start(this.uri, options);
@@ -56,7 +56,7 @@ class Album extends Base {
    * @returns {Promise}
    */
   starred() {
-    return this.spotify.albums.favorited(this.id);
+    return this.spotify.albums.starred(this.id);
   }
 }
 

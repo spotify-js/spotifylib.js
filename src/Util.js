@@ -12,13 +12,31 @@ class Util {
      */
     this.spotify = Spotify;
   }
+
+  /**
+   * Checks to see if the Response if json.
+   * @param {node-fetch#Response} response
+   * @returns {object|null}
+   */
+  toJson(response) {
+    return new Promise((resolve) => {
+      response.text().then((text) => {
+        if (text) {
+          resolve(JSON.parse(text));
+        } else {
+          resolve(null);
+        }
+      });
+    });
+  }
+
   /**
    * Fetchs from spotify's api.
    * @param {string} path - The path to fetch from.
    * @param {string} method - The method used in the fetch.
    * @param {object} body - The body for the fetch.
    * @param {node-fetch#Options} options - The options for the fetch.
-   * @returns {node-fetch#Response}
+   * @returns {Promise<node-fetch#Response>}
    */
   fetch({
     path,
