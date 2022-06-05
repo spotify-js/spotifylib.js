@@ -183,7 +183,7 @@ class AlbumManager {
   /**
    * Check if one or more albums is already saved in the current Spotify user's 'Your Music' library.
    * @param {string} ids - A list of the Spotify IDs for the albums.
-   * @returns {Promise<boolean|boolean[]|HTTPError|ApiError>}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   starred(ids) {
     const options = qs.stringify({
@@ -201,13 +201,11 @@ class AlbumManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                if (body.length == 1) {
-                  resolve(body[0]);
-                }
-                reject(new ApiError(response));
+                return resolve(body);
               }
-              reject(new HTTPError(response));
+              reject(new ApiError(response));
             }
+            reject(new HTTPError(response));
           });
         });
     });

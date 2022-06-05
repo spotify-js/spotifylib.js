@@ -310,7 +310,7 @@ class PlaylistManager {
    * Check to see if one or more Spotify users are following a specified playlist.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {string|string[]} users - A list of Spotify User IDs.
-   * @returns {boolean|boolean[]|HTTPError|ApiError}
+   * @returns {boolean[]|HTTPError|ApiError}
    */
   followers(id, users) {
     const options = qs.stringify({
@@ -328,9 +328,7 @@ class PlaylistManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                if (body.length == 1) {
-                  resolve(body[0]);
-                }
+                return resolve(body);
               }
               reject(new ApiError(body.error));
             }

@@ -158,7 +158,7 @@ class ArtistManager {
    * Check to see if the current user is following one or more artists.
    * @param {string} ids - The Spotify ID of the artist.
    * @param {string|string[]} users - A list of Spotify User IDs.
-   * @returns {boolean|boolean[]|HTTPError|ApiError}
+   * @returns {boolean[]|HTTPError|ApiError}
    */
   following(ids) {
     const options = qs.stringify({
@@ -177,9 +177,7 @@ class ArtistManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                if (body.length == 1) {
-                  resolve(body[0]);
-                }
+                return resolve(body);
               }
               reject(new ApiError(response));
             }

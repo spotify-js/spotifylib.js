@@ -146,7 +146,7 @@ class EpisodeManager {
   /**
    * Check if one or more episodes is already saved in the current Spotify user's 'Your Episodes' library.
    * @param {string|string[]} ids - A list of the Spotify IDs for the episodes.
-   * @returns {Promise<boolean|boolean[]|HTTPError|ApiError>}
+   * @returns {Promise<boolean[]|HTTPError|ApiError>}
    */
   starred(ids) {
     const options = qs.stringify({
@@ -163,10 +163,10 @@ class EpisodeManager {
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
-              if (body.length == 1) {
-                resolve(body[0]);
+              if (response.status == 200) {
+                return resolve(body);
               }
-              reject(new ApiError(body.error));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });

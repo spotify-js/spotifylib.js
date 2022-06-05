@@ -202,11 +202,9 @@ class ShowManager {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
-                if (body.length == 1) {
-                  resolve(body[0]);
-                }
+                return resolve(body);
               }
-              reject(new ApiError(body.error));
+              reject(new ApiError(response));
             }
             reject(new HTTPError(response));
           });
