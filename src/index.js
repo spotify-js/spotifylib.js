@@ -12,6 +12,7 @@ module.exports = {
   PlaylistManager: require('./managers/Playlist.js'),
   ShowManager: require('./managers/Show.js'),
   TrackManager: require('./managers/Show.js'),
+  UserManager: require('./managers/User.js'),
 
   /* Structures */
   Album: require('./structures/Album.js'),
@@ -21,4 +22,5 @@ module.exports = {
   Playlist: require('./structures/Playlist.js'),
   Show: require('./structures/Show.js'),
   Track: require('./structures/Track.js'),
+  User: require('./structures/User.js'),
 };

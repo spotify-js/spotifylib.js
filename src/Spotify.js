@@ -8,6 +8,7 @@ const ShowManager = require('./managers/Show.js');
 const AlbumManager = require('./managers/Album.js');
 const ArtistManager = require('./managers/Artist.js');
 const CategoryManager = require('./managers/Categories.js');
+const UserManager = require('./managers/User.js');
 
 class Spotify {
   /**
@@ -70,10 +71,16 @@ class Spotify {
     this.artists = new ArtistManager(this);
 
     /**
-     * The category manager.
+     * The Category Manager.
      * @type {CategoryManager}
      */
     this.categories = new CategoryManager(this);
+
+    /**
+     * The User Manager.
+     * @type {UserManager}
+     */
+    this.users = new UserManager(this);
 
     /**
      * The Refresher from node module 'spotify-oauth2'
