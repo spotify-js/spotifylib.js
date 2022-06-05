@@ -239,6 +239,108 @@ class PlaylistManager {
   }
 
   /**
+   * Add the current user as a follower of a playlist.
+   * @param {string} id - The Spotify ID of the playlist.
+   * @param {boolean} [state=true] -  If the playlist will be included in user's public playlists.
+   * @returns {Promise}
+   */
+  follow(id, state = true) {
+    const path = API + '/' + id + '/followers';
+
+    const body = {
+      public: state,
+    };
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+          body,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const playlists = body.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
+                resolve(playlists);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
+    });
+  }
+
+  /**
+   * Remove the current user as a follower of a playlist.
+   * @param {string} id - The Spotify ID of the playlist.
+   * @returns {Promise}
+   */
+  unfollow(id) {
+    const path = API + '/' + id + '/followers';
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                const playlists = body.items.map(
+                  (p) => new Playlist(this.spotify, p)
+                );
+                resolve(playlists);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
+    });
+  }
+
+  /**
+   * Check to see if one or more Spotify users are following a specified playlist.
+   * @param {string} id - The Spotify ID of the playlist.
+   * @param {string|string[]} users - A list of Spotify User IDs.
+   * @returns {boolean|boolean[]}
+   */
+  followers(id, users) {
+    const options = qs.stringify({
+      ids: typeof users == 'string' ? [users] : users.join(','),
+    });
+
+    const path = API + '/' + id + '/followers/contains?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
+    });
+  }
+
+  /**
    * Create a playlist for a Spotify user.
    * @param {string} id - The user's Spotify user ID.
    * @param {ModifyOptions} options
@@ -263,18 +365,7 @@ class PlaylistManager {
           method: 'post',
           body,
         })
-        .then((response) => {
-          this.spotify.util.toJson(response).then((body) => {
-            if (body) {
-              if (response.status == 201) {
-                const playlist = new Playlist(this.spotify, body);
-                resolve(playlist);
-              }
-              resolve(body);
-            }
-            resolve({ status: response.status });
-          });
-        });
+        .then((response) => resolve({ status: response.status }));
     });
   }
 

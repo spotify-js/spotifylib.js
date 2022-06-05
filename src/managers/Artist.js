@@ -90,6 +90,87 @@ class ArtistManager {
   }
 
   /**
+   * Add the current user as a follower of one or more artists.
+   * @param {string|string[]} ids - The Spotify ID of the artist.
+   * @returns {Promise}
+   */
+  follow(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'artist',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
+    });
+  }
+
+  /**
+   * Remove the current user as a follower of one or more artists.
+   * @param {string|string[]} ids - The Spotify ID of the artist.
+   * @returns {Promise}
+   */
+  unfollow(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'artist',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
+    });
+  }
+
+  /**
+   * Check to see if the current user is following one or more artists.
+   * @param {string} ids - The Spotify ID of the artist.
+   * @param {string|string[]} users - A list of Spotify User IDs.
+   * @returns {boolean|boolean[]}
+   */
+  following(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'artist',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following/contains?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
+    });
+  }
+
+  /**
    * Get Spotify catalog information about an artist's top tracks by country.
    * @param {string} id - The Spotify ID of the artist.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.

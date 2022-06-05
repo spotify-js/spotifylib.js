@@ -27,6 +27,30 @@ class Artist extends Base {
   }
 
   /**
+   * Shortcut to follow the artist.
+   * @returns {Promise}
+   */
+  follow() {
+    return this.spotify.artists.follow(this.id);
+  }
+
+  /**
+   * Shortcut to unfollow the artist.
+   * @returns {Promise}
+   */
+  unfollow() {
+    return this.spotify.artists.unfollow(this.id);
+  }
+
+  /**
+   * Shortcut to check if the current user is following the artist.
+   * @returns {Promise}
+   */
+  following() {
+    return this.spotify.artists.following(this.id);
+  }
+
+  /**
    * Shortcut to get the top tracks of an artist.
    * @param {string} country - An ISO 3166-1 alpha-2 country code.
    * @returns {Promise<Track[]>}

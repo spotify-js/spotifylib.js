@@ -65,6 +65,31 @@ class Playlist extends Base {
   }
 
   /**
+   * Shortcut to follow the playlist.
+   * @returns {Promise}
+   */
+  follow() {
+    return this.spotify.playlists.follow(this.id);
+  }
+
+  /**
+   * Shortcut to unfollow the playlist.
+   * @returns {Promise}
+   */
+  unfollow() {
+    return this.spotify.playlists.unfollow(this.id);
+  }
+
+  /**
+   * Shortcut to check user's following the playlist.
+   * @param {string|string[]} users - A list of Spotify User IDs.
+   * @returns {Promise}
+   */
+  following(users) {
+    return this.spotify.playlists.following(this.id, users);
+  }
+
+  /**
    * Shortcut to upload cover art to a playlist.
    * @param {string} [image] - The Base64 image encoded to upload as cover art.
    * @returns {Promise}

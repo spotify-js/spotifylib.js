@@ -93,7 +93,7 @@ class UserManager {
    * @param {FollowingArtistOptions} options
    * @returns {Artist[]}
    */
-  following({ after, limit = 20 } = {}) {
+  followed({ after, limit = 20 } = {}) {
     const opts = {
       type: 'artist',
       limit,
@@ -120,6 +120,87 @@ class UserManager {
                   (a) => new Artist(this.spotify, a)
                 );
                 resolve(artists);
+              }
+              resolve(body);
+            }
+            resolve({ status: response.status });
+          });
+        });
+    });
+  }
+
+  /**
+   * Add the current user as a follower of one or more user.
+   * @param {string|string[]} ids - The Spotify ID of the user.
+   * @returns {Promise}
+   */
+  follow(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'user',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+        })
+        .then((response) => resolve({ status: response.status }));
+    });
+  }
+
+  /**
+   * Remove the current user as a follower of one or more user.
+   * @param {string|string[]} ids - The Spotify ID of the user.
+   * @returns {Promise}
+   */
+  unfollow(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'user',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'delete',
+        })
+        .then((response) => resolve({ status: response.status }));
+    });
+  }
+
+  /**
+   * Check to see if the current user is following one or more users.
+   * @param {string} ids - The Spotify ID of the user.
+   * @param {string|string[]} users - A list of Spotify User IDs.
+   * @returns {boolean|boolean[]}
+   */
+  following(ids) {
+    const options = qs.stringify({
+      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      type: 'user',
+    });
+
+    const path = 'https://api.spotify.com/v1/me/following/contains?' + options;
+
+    return new Promise((resolve) => {
+      this.spotify.util
+        .fetch({
+          path,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 200) {
+                if (body.length == 1) {
+                  resolve(body[0]);
+                }
               }
               resolve(body);
             }
