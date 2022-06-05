@@ -90,6 +90,50 @@ class PlaylistManager {
   }
 
   /**
+   * Either reorder or replace items in a playlist depending on the request's parameters.
+   * @param {string[]} id - The Spotify ID of the playlist.
+   * @param {UpdatePlaylistOptions} options
+   * @returns {Status|HTTPError|ApiError}
+   */
+  update(id, { uris, start, before, length, snapshot }) {
+    const options = qs.stringify({
+      uris,
+    });
+
+    const body = {
+      range_start: start,
+      insert_before: before,
+      range_length: length,
+      snapshot_id: snapshot,
+    };
+
+    const path = API + '/' + id + '/tracks?' + options;
+
+    return new Promise((resolve, reject) => {
+      this.spotify.util
+        .fetch({
+          path,
+          method: 'put',
+          body,
+        })
+        .then((response) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
+              if (response.status == 201) {
+                return resolve({
+                  status: response.status,
+                  snapshot: body.snapshot_id,
+                });
+              }
+              reject(new ApiError(body.error));
+            }
+            reject(new HTTPError(response));
+          });
+        });
+    });
+  }
+
+  /**
    * Get full details of the items of a playlist owned by a Spotify user.
    * @param {string} id - The Spotify ID of the playlist.
    * @param {PlaylistTracksOptions} options
@@ -572,4 +616,13 @@ module.exports = PlaylistManager;
  * @property {boolean} public - If true the playlist will be public, if false it will be private.
  * @property {boolean} collaborative - If true, the playlist will become collaborative and other users will be able to modify the playlist in their Spotify client.
  * @property {string} description - Value for playlist description.
+ */
+
+/**
+ * @typedef {Object} UpdatePlaylistOptions
+ * @property {string[]} [uris] - A list of Spotify URIs to set, can be track or episode URIs.
+ * @property {number} [start] - The position of the first item to be reordered.
+ * @property {number} [before] - The position where the items should be inserted. To reorder the items to the end of the playlist, simply set insert_before to the position after the last item.
+ * @property {number} [length=1] - The amount of items to be reordered.
+ * @property {string} [snapshop] - The playlist's snapshot ID against which you want to make the changes.
  */
