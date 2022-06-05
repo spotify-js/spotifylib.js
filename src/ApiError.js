@@ -22,4 +22,5 @@ module.exports = ApiError;
 /**
  * @typedef {Object} Status
  * @property {number} status - The status from the request.
+ * @property {string} [snapshot] - The playlist's snapshot ID. (applies to playlist changes)
  */

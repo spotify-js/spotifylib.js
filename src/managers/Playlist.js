@@ -177,7 +177,7 @@ class PlaylistManager {
   /**
    * Add one or more items to a user's playlist.
    * @param {string} id - The Spotify ID of the playlist.
-   * @param {string|string[]} uris - A list of Spotify URIs to add, can be track or episode URIs. Maximum: 100
+   * @param {ContextURI|ContextURI[]} uris - A list of Spotify URIs to add, can be track or episode URIs. Maximum: 100
    * @param {number} [position=0] - The position to insert the items, a zero-based index.
    * @returns {Promise<Status|HTTPError|ApiError>}
    */
@@ -213,7 +213,7 @@ class PlaylistManager {
   /**
    * Remove one or more items from a user's playlist.
    * @param {string} id - The Spotify ID of the playlist.
-   * @param {string|string[]} uris - A list of Spotify URIs to remove, can be track or episode URIs. Maximum: 100
+   * @param {ContextURI|ContextURI[]} uris - A list of Spotify URIs to remove, can be track or episode URIs. Maximum: 100
    * @param {string} [snapshot] - The playlist's snapshot ID against which you want to make the changes.
    * @returns {Promise<Status|HTTPError|ApiError>}
    */
@@ -620,9 +620,9 @@ module.exports = PlaylistManager;
 
 /**
  * @typedef {Object} UpdatePlaylistOptions
- * @property {string[]} [uris] - A list of Spotify URIs to set, can be track or episode URIs.
+ * @property {ContextURI[]} [uris] - A list of Spotify URIs to set, can be track or episode URIs.
  * @property {number} [start] - The position of the first item to be reordered.
  * @property {number} [before] - The position where the items should be inserted. To reorder the items to the end of the playlist, simply set insert_before to the position after the last item.
  * @property {number} [length=1] - The amount of items to be reordered.
- * @property {string} [snapshop] - The playlist's snapshot ID against which you want to make the changes.
+ * @property {string} [snapshot] - The playlist's snapshot ID against which you want to make the changes.
  */

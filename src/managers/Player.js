@@ -546,8 +546,8 @@ module.exports = PlayerManager;
 /**
  * @typedef {Object} RecentOptions
  * @property {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
- * @property {number} after - A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position.
- * @property {number} before -A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position.
+ * @property {number} [after] - A Unix timestamp in milliseconds. Returns all items before (but not including) this cursor position.
+ * @property {number} [before] -A Unix timestamp in milliseconds. Returns all items after (but not including) this cursor position.
  */
 
 /**

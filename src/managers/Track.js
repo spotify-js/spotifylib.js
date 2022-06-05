@@ -305,9 +305,9 @@ module.exports = TrackManager;
 /**
  * @typedef {Object} RecommendedOptions
  * @property {SeedOptions} seeds - Recommendations based on the seed options.
- * @property {Attributes} max - The maximum values of for the attributes.
- * @property {Attributes} min - The minimum values of for the attributes.
- * @property {Attributes} target - The target values of for the attributes.
+ * @property {Attributes} [max] - The maximum values of for the attributes.
+ * @property {Attributes} [min] - The minimum values of for the attributes.
+ * @property {Attributes} [target] - The target values of for the attributes.
  * @property {number} [limit=20] - The maximum number of items to return. Minimum: 1. Maximum: 50.
  */
 
