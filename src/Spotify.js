@@ -11,6 +11,7 @@ const CategoryManager = require('./managers/Categories.js');
 const UserManager = require('./managers/User.js');
 
 const HTTPError = require('./HTTPError.js');
+const ApiError = require('./ApiError.js');
 
 class Spotify {
   /**
@@ -111,7 +112,7 @@ class Spotify {
                 const genres = body.genres;
                 resolve(genres);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
@@ -138,7 +139,7 @@ class Spotify {
                 const markets = body.markets;
                 resolve(markets);
               }
-              resolve(body);
+              reject(new ApiError(body.error));
             }
             reject(new HTTPError(response));
           });
