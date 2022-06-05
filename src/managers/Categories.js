@@ -1,6 +1,7 @@
 const qs = require('querystring');
 
 const API = 'https://api.spotify.com/v1';
+const HTTPError = require('../HTTPError.js');
 
 class CategoryManager {
   /**
@@ -36,12 +37,12 @@ class CategoryManager {
         .fetch({
           path,
         })
-        .then((response) => {
+        .then((response, reject) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -69,7 +70,7 @@ class CategoryManager {
         .fetch({
           path,
         })
-        .then((response) => {
+        .then((response, reject) => {
           this.spotify.util.toJson(response).then((body) => {
             if (body) {
               if (response.status == 200) {
@@ -78,7 +79,7 @@ class CategoryManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

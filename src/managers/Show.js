@@ -3,6 +3,7 @@ const Show = require('../structures/Show.js');
 const Episode = require('../structures/Episode.js');
 
 const API = 'https://api.spotify.com/v1/me/shows';
+const HTTPError = require('../HTTPError.js');
 
 class ShowManager {
   /**
@@ -25,7 +26,7 @@ class ShowManager {
   get(id) {
     const path = 'https://api.spotify.com/v1/shows/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -39,7 +40,7 @@ class ShowManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -60,7 +61,7 @@ class ShowManager {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/shows/' + id + '/episodes?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -76,7 +77,7 @@ class ShowManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -95,7 +96,7 @@ class ShowManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -111,7 +112,7 @@ class ShowManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -129,13 +130,18 @@ class ShowManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -151,13 +157,18 @@ class ShowManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'delete',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -173,7 +184,7 @@ class ShowManager {
 
     const path = API + '/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -188,7 +199,7 @@ class ShowManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -215,7 +226,7 @@ class ShowManager {
     const options = qs.stringify(opts);
     const path = 'https://api.spotify.com/v1/search?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -232,7 +243,7 @@ class ShowManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

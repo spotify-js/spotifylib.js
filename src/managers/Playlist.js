@@ -3,6 +3,7 @@ const Playlist = require('../structures/Playlist.js');
 const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/playlists';
+const HTTPError = require('../HTTPError.js');
 
 class PlaylistManager {
   /**
@@ -31,7 +32,7 @@ class PlaylistManager {
 
     const path = API + '/' + id + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -45,7 +46,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -67,14 +68,19 @@ class PlaylistManager {
 
     const path = API + '/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
           body,
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -94,7 +100,7 @@ class PlaylistManager {
 
     const path = API + '/' + id + '/tracks?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -114,7 +120,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -135,7 +141,7 @@ class PlaylistManager {
 
     const path = API + '/' + id + '/tracks';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -143,17 +149,15 @@ class PlaylistManager {
           body,
         })
         .then((response) => {
-          if (response.body) {
-            response.json().then((body) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 201) {
                 resolve({ snapshot: body.snapshot_id });
               }
-
               resolve(body);
-            });
-          } else {
-            resolve({ status: response.status });
-          }
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -173,7 +177,7 @@ class PlaylistManager {
 
     const path = API + '/' + id + '/tracks';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -181,17 +185,15 @@ class PlaylistManager {
           body,
         })
         .then((response) => {
-          if (response.body) {
-            response.json().then((body) => {
+          this.spotify.util.toJson(response).then((body) => {
+            if (body) {
               if (response.status == 200) {
                 resolve({ snapshot: body.snapshot_id });
               }
-
               resolve(body);
-            });
-          } else {
-            resolve({ status: response.status });
-          }
+            }
+            reject(new HTTPError(response));
+          });
         });
     });
   }
@@ -216,7 +218,7 @@ class PlaylistManager {
       path = 'https://api.spotify.com/v1/users/' + id + '/playlists?' + options;
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -232,7 +234,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -251,7 +253,7 @@ class PlaylistManager {
       public: state,
     };
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -269,7 +271,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -283,7 +285,7 @@ class PlaylistManager {
   unfollow(id) {
     const path = API + '/' + id + '/followers';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -300,7 +302,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -319,7 +321,7 @@ class PlaylistManager {
 
     const path = API + '/' + id + '/followers/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -334,7 +336,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -358,14 +360,19 @@ class PlaylistManager {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/users/' + id + '/playlists?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'post',
           body,
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -389,7 +396,7 @@ class PlaylistManager {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/browse/featured-playlists?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -405,7 +412,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -426,7 +433,7 @@ class PlaylistManager {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/browse/categories/' + id + '/playlists?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -442,7 +449,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -471,13 +478,13 @@ class PlaylistManager {
       opts['method'] = 'put';
     }
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util.fetch(opts).then((response) => {
         this.spotify.util.toJson(response).then((body) => {
-          if (body) {
+          if (response.ok) {
             resolve(body);
           }
-          resolve({ status: response.status });
+          reject(new HTTPError(response));
         });
       });
     });
@@ -504,7 +511,7 @@ class PlaylistManager {
     const options = qs.stringify(opts);
     const path = 'https://api.spotify.com/v1/search?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -520,7 +527,7 @@ class PlaylistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

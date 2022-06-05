@@ -4,6 +4,7 @@ const Track = require('../structures/Track.js');
 const User = require('../structures/User.js');
 
 const API = 'https://api.spotify.com/v1/me';
+const HTTPError = require('../HTTPError.js');
 
 class UserManager {
   /**
@@ -26,7 +27,7 @@ class UserManager {
   get(id) {
     const path = 'https://api.spotify.com/v1/users/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -40,7 +41,7 @@ class UserManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -61,7 +62,7 @@ class UserManager {
 
     const path = API + '/top/' + type + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -82,7 +83,7 @@ class UserManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -106,14 +107,13 @@ class UserManager {
     const options = qs.stringify(opts);
     const path = API + '/following?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
         })
         .then((response) => {
           this.spotify.util.toJson(response).then((body) => {
-            console.log(body);
             if (body) {
               if (response.status == 200) {
                 const artists = body.artists.items.map(
@@ -123,7 +123,7 @@ class UserManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -142,13 +142,18 @@ class UserManager {
 
     const path = 'https://api.spotify.com/v1/me/following?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -165,13 +170,18 @@ class UserManager {
 
     const path = 'https://api.spotify.com/v1/me/following?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'delete',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -189,7 +199,7 @@ class UserManager {
 
     const path = 'https://api.spotify.com/v1/me/following/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -204,7 +214,7 @@ class UserManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -215,7 +225,7 @@ class UserManager {
    * @returns {Promise<User>}
    */
   me() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path: API,
@@ -229,7 +239,7 @@ class UserManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

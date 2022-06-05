@@ -4,6 +4,7 @@ const Artist = require('../structures/Artist.js');
 const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/artists';
+const HTTPError = require('../HTTPError.js');
 
 class ArtistManager {
   /**
@@ -26,7 +27,7 @@ class ArtistManager {
   get(id) {
     const path = API + '/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -40,7 +41,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -66,7 +67,7 @@ class ArtistManager {
 
     const path = API + '/' + id + '/albums?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -83,7 +84,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({status: response.status});
+            reject(new HTTPError(response));
           });
         });
     });
@@ -102,13 +103,18 @@ class ArtistManager {
 
     const path = 'https://api.spotify.com/v1/me/following?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -125,13 +131,18 @@ class ArtistManager {
 
     const path = 'https://api.spotify.com/v1/me/following?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'delete',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -149,7 +160,7 @@ class ArtistManager {
 
     const path = 'https://api.spotify.com/v1/me/following/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -164,7 +175,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -183,7 +194,7 @@ class ArtistManager {
 
     const path = API + '/' + id + '/top-tracks?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -199,7 +210,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -213,7 +224,7 @@ class ArtistManager {
   related(id) {
     const path = API + '/' + id + '/related-artists';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -229,7 +240,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -256,7 +267,7 @@ class ArtistManager {
     const options = qs.stringify(opts);
     const path = 'https://api.spotify.com/v1/search?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -272,7 +283,7 @@ class ArtistManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

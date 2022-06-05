@@ -1,4 +1,5 @@
 const API = 'https://api.spotify.com/v1';
+const HTTPError = require('../HTTPError.js');
 
 class AudioManager {
   /**
@@ -21,7 +22,7 @@ class AudioManager {
   features(id) {
     const path = API + '/audio-features/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -31,7 +32,7 @@ class AudioManager {
             if (body) {
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -45,7 +46,7 @@ class AudioManager {
   analysis(id) {
     const path = API + '/audio-analysis/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -55,7 +56,7 @@ class AudioManager {
             if (body) {
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

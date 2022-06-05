@@ -2,6 +2,7 @@ const qs = require('querystring');
 const Episode = require('../structures/Episode.js');
 
 const API = 'https://api.spotify.com/v1/me/episodes';
+const HTTPError = require('../HTTPError.js');
 
 class EpisodeManager {
   /**
@@ -24,7 +25,7 @@ class EpisodeManager {
   get(id) {
     const path = 'https://api.spotify.com/v1/episodes/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -38,7 +39,7 @@ class EpisodeManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -57,7 +58,7 @@ class EpisodeManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -73,7 +74,7 @@ class EpisodeManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -91,13 +92,18 @@ class EpisodeManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -113,13 +119,18 @@ class EpisodeManager {
 
     const path = API + '?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'delete',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -135,7 +146,7 @@ class EpisodeManager {
 
     const path = API + '/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -148,7 +159,7 @@ class EpisodeManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -175,7 +186,7 @@ class EpisodeManager {
     const options = qs.stringify(opts);
     const path = 'https://api.spotify.com/v1/search?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -191,7 +202,7 @@ class EpisodeManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

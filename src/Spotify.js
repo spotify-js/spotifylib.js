@@ -10,6 +10,8 @@ const ArtistManager = require('./managers/Artist.js');
 const CategoryManager = require('./managers/Categories.js');
 const UserManager = require('./managers/User.js');
 
+const HTTPError = require('./HTTPError.js');
+
 class Spotify {
   /**
    * Spotify Client.
@@ -97,7 +99,7 @@ class Spotify {
     /* prettier-ignore */
     const path = 'https://api.spotify.com/v1/recommendations/available-genre-seeds';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.util
         .fetch({
           path,
@@ -111,7 +113,7 @@ class Spotify {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -124,7 +126,7 @@ class Spotify {
   markets() {
     const path = 'https://api.spotify.com/v1/markets ';
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.util
         .fetch({
           path,
@@ -138,7 +140,7 @@ class Spotify {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });

@@ -3,6 +3,7 @@ const Album = require('../structures/Album.js');
 const Track = require('../structures/Track.js');
 
 const API = 'https://api.spotify.com/v1/albums';
+const HTTPError = require('../HTTPError.js');
 
 class AlbumManager {
   /**
@@ -25,7 +26,7 @@ class AlbumManager {
   get(id) {
     const path = API + '/' + id;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -39,7 +40,7 @@ class AlbumManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -59,7 +60,7 @@ class AlbumManager {
 
     const path = API + '/' + id + '/tracks?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -76,7 +77,7 @@ class AlbumManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -95,7 +96,7 @@ class AlbumManager {
 
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -111,7 +112,7 @@ class AlbumManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -129,13 +130,18 @@ class AlbumManager {
 
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'put',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -151,13 +157,18 @@ class AlbumManager {
 
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
           method: 'delete',
         })
-        .then((response) => resolve({ status: response.status }));
+        .then((response) => {
+          if (response.ok) {
+            resolve({ status: response.status });
+          }
+          reject(new HTTPError(response));
+        });
     });
   }
 
@@ -173,7 +184,7 @@ class AlbumManager {
 
     const path = 'https://api.spotify.com/v1/me/albums/contains?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -187,7 +198,7 @@ class AlbumManager {
                 }
                 resolve(body);
               }
-              resolve({ status: response.status });
+              reject(new HTTPError(response));
             }
           });
         });
@@ -207,7 +218,7 @@ class AlbumManager {
 
     const path = 'https://api.spotify.com/v1/browse/new-releases?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -223,7 +234,7 @@ class AlbumManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
@@ -250,7 +261,7 @@ class AlbumManager {
     const options = qs.stringify(opts);
     const path = 'https://api.spotify.com/v1/search?' + options;
 
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.spotify.util
         .fetch({
           path,
@@ -266,7 +277,7 @@ class AlbumManager {
               }
               resolve(body);
             }
-            resolve({ status: response.status });
+            reject(new HTTPError(response));
           });
         });
     });
