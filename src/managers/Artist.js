@@ -61,7 +61,7 @@ class ArtistManager {
     offset = 0,
   } = {}) {
     const options = qs.stringify({
-      include_groups: typeof groups == 'string' ? [groups] : groups.join(','),
+      include_groups: Array.isArray(groups) ? groups.join(',') : groups,
       limit,
       offset,
     });
@@ -97,7 +97,7 @@ class ArtistManager {
    */
   follow(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'artist',
     });
 
@@ -129,7 +129,7 @@ class ArtistManager {
    */
   unfollow(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'artist',
     });
 
@@ -162,7 +162,7 @@ class ArtistManager {
    */
   following(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'artist',
     });
 

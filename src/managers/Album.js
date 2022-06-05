@@ -125,7 +125,7 @@ class AlbumManager {
    */
   save(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
@@ -156,7 +156,7 @@ class AlbumManager {
    */
   remove(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = 'https://api.spotify.com/v1/me/albums?' + options;
@@ -187,7 +187,7 @@ class AlbumManager {
    */
   starred(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = 'https://api.spotify.com/v1/me/albums/contains?' + options;

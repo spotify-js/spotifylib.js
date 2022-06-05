@@ -113,7 +113,7 @@ class PlayerManager {
    */
   current(types = ['track']) {
     const options = qs.stringify({
-      additional_types: typeof types == 'string' ? [types] : types.join(','),
+      additional_types: Array.isArray(types) ? types.join(',') : types,
     });
 
     const path = API + '/currently-playing?' + options;

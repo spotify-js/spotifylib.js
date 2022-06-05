@@ -126,7 +126,7 @@ class ShowManager {
    */
   save(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -157,7 +157,7 @@ class ShowManager {
    */
   remove(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -188,7 +188,7 @@ class ShowManager {
    */
   starred(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '/contains?' + options;

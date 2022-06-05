@@ -88,7 +88,7 @@ class EpisodeManager {
    */
   save(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -119,7 +119,7 @@ class EpisodeManager {
    */
   remove(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -150,7 +150,7 @@ class EpisodeManager {
    */
   starred(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '/contains?' + options;

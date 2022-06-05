@@ -183,7 +183,7 @@ class PlaylistManager {
    */
   add(id, uris, position = 0) {
     const body = {
-      uris: typeof uris == 'string' ? [uris] : uris,
+      uris: Array.isArray(uris) ? uris.join(',') : uris,
       position,
     };
 
@@ -219,7 +219,7 @@ class PlaylistManager {
    */
   remove(id, uris, snapshot) {
     const body = {
-      uris: typeof uris == 'string' ? [uris] : uris,
+      uris: Array.isArray(uris) ? uris.join(',') : uris,
       snapshot,
     };
 
@@ -358,7 +358,7 @@ class PlaylistManager {
    */
   followers(id, users) {
     const options = qs.stringify({
-      ids: typeof users == 'string' ? [users] : users.join(','),
+      ids: Array.isArray(users) ? users.join(',') : users,
     });
 
     const path = API + '/' + id + '/followers/contains?' + options;

@@ -137,7 +137,7 @@ class UserManager {
    */
   follow(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'user',
     });
 
@@ -169,7 +169,7 @@ class UserManager {
    */
   unfollow(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'user',
     });
 
@@ -202,7 +202,7 @@ class UserManager {
    */
   following(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
       type: 'user',
     });
 

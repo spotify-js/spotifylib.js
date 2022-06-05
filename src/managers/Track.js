@@ -95,7 +95,7 @@ class TrackManager {
    */
   save(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -126,7 +126,7 @@ class TrackManager {
    */
   remove(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '?' + options;
@@ -157,7 +157,7 @@ class TrackManager {
    */
   starred(ids) {
     const options = qs.stringify({
-      ids: typeof ids == 'string' ? [ids] : ids.join(','),
+      ids: Array.isArray(ids) ? ids.join(',') : ids,
     });
 
     const path = API + '/contains?' + options;
